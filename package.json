@@ -1,0 +1,10 @@
+{
+  "name": "scimitar",
+  "version": "0.1.0",
+  "description": "A toolkit that makes redux delightful",
+  "main": "dist/index.js",
+  "repository": "github.com/PsychoLlama/scimitar",
+  "author": "Jesse Gibson <JesseTheGibson@gmail.com>",
+  "license": "MIT",
+  "private": true
+}
