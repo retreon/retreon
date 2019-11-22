@@ -1,0 +1,18 @@
+extends:
+- eslint:recommended
+- plugin:@typescript-eslint/recommended
+- plugin:prettier/recommended
+- prettier/@typescript-eslint
+
+parser: '@typescript-eslint/parser'
+
+env:
+  shared-node-browser: true
+  es6: true
+
+parserOptions:
+  sourceType: module
+
+rules:
+  '@typescript-eslint/explicit-function-return-type': off
+  '@typescript-eslint/no-use-before-define': off
