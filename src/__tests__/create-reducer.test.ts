@@ -1,4 +1,5 @@
 import createReducer from '../create-reducer';
+import createAction from '../create-action';
 
 describe('createReducer', () => {
   it('returns a reducer', () => {
@@ -21,5 +22,20 @@ describe('createReducer', () => {
     const state = reducer(5, { type: 'random' });
 
     expect(state).toBe(5);
+  });
+
+  describe('handleAction', () => {
+    it('calls the action reducer when it matches', () => {
+      const increment = createAction('increment', () => undefined);
+      const actionReducer = jest.fn();
+
+      const reducer = createReducer(0, handleAction => [
+        handleAction(increment, actionReducer),
+      ]);
+
+      const action = increment();
+      reducer(undefined, action);
+      expect(actionReducer).toHaveBeenCalledWith(0, action);
+    });
   });
 });

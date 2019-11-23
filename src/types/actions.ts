@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+export type ActionConstant = string | symbol;
 
 // Return the type of the parameter, or void if none is accepted. Effects
 // can't take more than one argument.
@@ -17,7 +18,14 @@ export type PayloadType<
   ? Payload
   : never;
 
-export type ActionType<Type, Payload> = {
-  type: Type;
-  payload: Payload;
+export type Action<Payload> = {
+  type: ActionConstant;
+  payload?: Payload;
+  error?: boolean;
+};
+
+export type CoercibleAction = {
+  [Symbol.toPrimitive](hint: string): ActionConstant;
+  toString(): ActionConstant;
+  (...args: any): any;
 };

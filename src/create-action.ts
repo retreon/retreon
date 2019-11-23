@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputType, PayloadType, ActionType } from './types/actions';
+import {
+  InputType,
+  PayloadType,
+  Action,
+  ActionConstant,
+} from './types/actions';
 
 // The `createAction(...)` utility only allows 1 argument. If the effect
 // doesn't take an argument, neither should the action creator.
-type HofType<Type, Effect extends Function> = Effect extends () => infer Payload
-  ? () => ActionType<Type, Payload>
+type HofType<Effect extends Function> = Effect extends () => infer Payload
+  ? () => Action<Payload>
   : Effect extends (input: infer Input, ...rest: any) => infer Payload
-  ? (input: Input) => ActionType<Type, Payload>
+  ? (input: Input) => Action<Payload>
   : never;
 
-export default function createAction<
-  ActionType extends string | symbol,
-  Effect extends Function
->(actionType: ActionType, effect: Effect) {
+export default function createAction<Effect extends Function>(
+  actionType: ActionConstant,
+  effect: Effect,
+) {
   const actionCreator = Object.assign(
     (input: InputType<Effect>) => {
       const payload: PayloadType<Effect> = effect(input);
@@ -20,11 +25,13 @@ export default function createAction<
       return { type: actionType, payload };
     },
     {
+      [Symbol.toPrimitive]: () => actionType,
       toString: () => actionType,
     },
   );
 
-  return actionCreator as HofType<ActionType, Effect> & {
-    toString(): ActionType;
+  return actionCreator as HofType<Effect> & {
+    [Symbol.toPrimitive](): ActionConstant;
+    toString(): ActionConstant;
   };
 }
