@@ -1,7 +1,7 @@
-const VALUE = Symbol('Failed action value');
+export const VALUE = Symbol('Failed action value');
 
 // Used to represent errors in synchronous actions.
-interface Exception<Value> {
+export interface Exception<Value> {
   [VALUE]: Value;
 }
 

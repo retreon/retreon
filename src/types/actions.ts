@@ -9,15 +9,6 @@ export type InputType<Effect extends Function> = Effect extends (
   ? Input
   : void;
 
-// Same as `ReturnType<...>` but enforces a single parameter limit.
-export type PayloadType<
-  Effect extends Function
-> = Effect extends () => infer Payload
-  ? Payload
-  : Effect extends (input: any) => infer Payload
-  ? Payload
-  : never;
-
 export type Action<Payload> = {
   type: ActionConstant;
   payload?: Payload;
