@@ -1,30 +1,10 @@
 import { CoercibleAction, ActionConstant, Action } from './types/actions';
-
-type ReducerReturnType<State> = void | State;
-
-interface ReducerDefinition<Reducer> {
-  actionType: ActionConstant;
-  reducerType: 'synchronous';
-  reducer: Reducer;
-}
-
-interface HandleAction<State> {
-  <
-    ActionCreator extends CoercibleAction,
-    Reducer extends (
-      state: State,
-      action: ReturnType<ActionCreator>,
-    ) => ReducerReturnType<State>
-  >(
-    action: ActionCreator,
-    reducer: Reducer,
-  ): ReducerDefinition<Reducer>;
-}
+import { CreateReducer, ReducerDefinition } from './types/create-reducer';
 
 type ActionHandlerMap = Map<ActionConstant, { synchronous: Array<Function> }>;
 
 const buildActionMap = (
-  definitions: Array<ReducerDefinition<Function>>,
+  definitions: Array<ReducerDefinition>,
 ): ActionHandlerMap => {
   const actionMap = new Map();
 
@@ -42,15 +22,10 @@ const buildActionMap = (
   return actionMap;
 };
 
-function createReducer<
-  State,
-  ReducerFactory extends (
-    handleAction: HandleAction<State>,
-  ) => Array<ReducerDefinition<Function>>
->(initialState: State, reducerFactory: ReducerFactory) {
-  const handleAction: HandleAction<State> = <Reducer>(
+function createReducer<State>(initialState: State, reducerFactory: Function) {
+  const handleAction = (
     actionCreator: CoercibleAction,
-    reducer: Reducer,
+    reducer: (handleAction: Function) => Array<ReducerDefinition>,
   ) => ({
     actionType: actionCreator[Symbol.toPrimitive]('default'),
     reducerType: 'synchronous',
@@ -60,7 +35,10 @@ function createReducer<
   const reducers = reducerFactory(handleAction);
   const actionMap = buildActionMap(reducers);
 
-  const reducer = (state: State = initialState, action: Action<any>) => {
+  const reducer = <Payload>(
+    state: State = initialState,
+    action: Action<Payload>,
+  ) => {
     const handlers = actionMap.get(action.type);
     if (!handlers) return state;
 
@@ -73,4 +51,4 @@ function createReducer<
   return reducer;
 }
 
-export default createReducer;
+export default createReducer as CreateReducer;
