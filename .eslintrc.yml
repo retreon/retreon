@@ -2,6 +2,8 @@ overrides:
 - files: 'src/**/__tests__/*.{js,ts}'
   env:
     jest: true
+  rules:
+    '@typescript-eslint/no-explicit-any': off
 
 extends:
 - eslint:recommended

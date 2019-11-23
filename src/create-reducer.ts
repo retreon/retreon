@@ -1,5 +1,6 @@
 import { CoercibleAction, ActionConstant, Action } from './types/actions';
 import { CreateReducer, ReducerDefinition } from './types/create-reducer';
+import getActionType from './get-action-type';
 
 type ActionHandlerMap = Map<ActionConstant, { synchronous: Array<Function> }>;
 
@@ -27,7 +28,7 @@ function createReducer<State>(initialState: State, reducerFactory: Function) {
     actionCreator: CoercibleAction,
     reducer: (handleAction: Function) => Array<ReducerDefinition>,
   ) => ({
-    actionType: actionCreator[Symbol.toPrimitive]('default'),
+    actionType: getActionType(actionCreator),
     reducerType: 'synchronous',
     reducer,
   });
