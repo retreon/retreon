@@ -1,31 +1,11 @@
-import { ActionConstant, Action } from './types/actions';
-import { CreateReducer, ReducerDefinition } from './types/create-reducer';
+import { Action } from './types/actions';
+import { CreateReducer } from './types/create-reducer';
 import handleAction from './handle-action';
-
-type ActionHandlerMap = Map<ActionConstant, { synchronous: Array<Function> }>;
-
-const buildActionMap = (
-  definitions: Array<ReducerDefinition>,
-): ActionHandlerMap => {
-  const actionMap = new Map();
-
-  definitions.forEach(({ actionType, reducer }) => {
-    if (!actionMap.has(actionType)) {
-      actionMap.set(actionType, {
-        synchronous: [],
-      });
-    }
-
-    const entries = actionMap.get(actionType);
-    entries.synchronous.push(reducer);
-  });
-
-  return actionMap;
-};
+import mapActionsToReducers from './map-actions-to-reducers';
 
 function createReducer<State>(initialState: State, reducerFactory: Function) {
   const reducers = reducerFactory(handleAction);
-  const actionMap = buildActionMap(reducers);
+  const actionMap = mapActionsToReducers(reducers);
 
   const reducer = <Payload>(
     state: State = initialState,
