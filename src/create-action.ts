@@ -5,6 +5,7 @@ import {
   Action,
   ActionConstant,
 } from './types/actions';
+import { isFailure, getValue } from './action-failure';
 
 // The `createAction(...)` utility only allows 1 argument. If the effect
 // doesn't take an argument, neither should the action creator.
@@ -21,6 +22,14 @@ export default function createAction<Effect extends Function>(
   const actionCreator = Object.assign(
     (input: InputType<Effect>) => {
       const payload: PayloadType<Effect> = effect(input);
+
+      if (isFailure(payload)) {
+        return {
+          type: actionType,
+          error: true,
+          payload: getValue(payload as any),
+        };
+      }
 
       return { type: actionType, payload };
     },
