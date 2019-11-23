@@ -1,6 +1,6 @@
-import { CoercibleAction, ActionConstant, Action } from './types/actions';
+import { ActionConstant, Action } from './types/actions';
 import { CreateReducer, ReducerDefinition } from './types/create-reducer';
-import getActionType from './get-action-type';
+import handleAction from './handle-action';
 
 type ActionHandlerMap = Map<ActionConstant, { synchronous: Array<Function> }>;
 
@@ -24,15 +24,6 @@ const buildActionMap = (
 };
 
 function createReducer<State>(initialState: State, reducerFactory: Function) {
-  const handleAction = (
-    actionCreator: CoercibleAction,
-    reducer: (handleAction: Function) => Array<ReducerDefinition>,
-  ) => ({
-    actionType: getActionType(actionCreator),
-    reducerType: 'synchronous',
-    reducer,
-  });
-
   const reducers = reducerFactory(handleAction);
   const actionMap = buildActionMap(reducers);
 
