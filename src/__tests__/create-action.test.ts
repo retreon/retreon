@@ -24,4 +24,22 @@ describe('createAction', () => {
       payload: 'nope',
     });
   });
+
+  // Other parameters reserved for future use. Pass an object instead.
+  it('only passes the first parameter', () => {
+    const effect = jest.fn();
+    const increment = createAction('increment', effect);
+
+    (increment as any)(1, null);
+
+    expect(effect).toHaveBeenCalledWith(1);
+  });
+
+  it('always uses an undefined payload if no effect is provided', () => {
+    const increment = createAction('increment');
+
+    expect(increment()).toEqual({
+      type: 'increment',
+    });
+  });
 });

@@ -5,10 +5,14 @@ import { isFailure, getValue } from './action-failure';
 
 const createAction = <Effect extends Function>(
   actionType: ActionConstant,
-  effect: Effect,
+  effect?: Effect,
 ) => {
   const actionCreator = Object.assign(
     (input: InputType<Effect>) => {
+      if (effect === undefined) {
+        return { type: actionType };
+      }
+
       const payload = effect(input);
 
       if (isFailure(payload)) {
