@@ -14,7 +14,11 @@ function createReducer<State>(initialState: State, reducerFactory: Function) {
     const handlers = actionMap.get(action.type);
     if (!handlers) return state;
 
-    return handlers.synchronous.reduce(
+    const reducersForActionType = action.error
+      ? handlers.error
+      : handlers.synchronous;
+
+    return reducersForActionType.reduce(
       (state, reducer) => reducer(state, action),
       state,
     );

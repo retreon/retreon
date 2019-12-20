@@ -1,5 +1,6 @@
 import createReducer from '../create-reducer';
 import createAction from '../create-action';
+import { failure } from '../action-failure';
 
 describe('createReducer', () => {
   it('returns a reducer', () => {
@@ -36,6 +37,26 @@ describe('createReducer', () => {
       const action = increment();
       reducer(undefined, action);
       expect(actionReducer).toHaveBeenCalledWith(0, action);
+    });
+
+    it('ignores action errors', () => {
+      const unstable = createAction('unstable', (fail: boolean) => {
+        if (fail) return failure('Testing failures');
+        return true;
+      });
+
+      const onSuccess = jest.fn();
+      const onFailure = jest.fn();
+
+      const reducer = createReducer(0, handleAction => [
+        handleAction(unstable, onSuccess),
+        handleAction.error(unstable, onFailure),
+      ]);
+
+      reducer(undefined, unstable(true));
+
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(onFailure).toHaveBeenCalled();
     });
   });
 });

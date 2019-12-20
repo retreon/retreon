@@ -1,5 +1,6 @@
 import handleAction from '../handle-action';
 import createAction from '../create-action';
+import { failure } from '../action-failure';
 
 describe('handleAction', () => {
   const increment = createAction('increment', () => undefined);
@@ -21,6 +22,18 @@ describe('handleAction', () => {
 
     expect(def).toMatchObject({
       actionType: 'increment',
+    });
+  });
+
+  describe('.error(...)', () => {
+    const die = createAction('die', () => failure('nope'));
+
+    it('returns an action definition', () => {
+      const def = handleAction.error(die, () => {});
+
+      expect(def).toMatchObject({
+        actionType: 'die',
+      });
     });
   });
 });

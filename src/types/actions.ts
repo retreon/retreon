@@ -15,8 +15,10 @@ export type Action<Payload> = {
   error?: boolean;
 };
 
-export type CoercibleAction = {
+export type ActionTypeCoercible = {
   [Symbol.toPrimitive](hint: string): ActionConstant;
   toString(): ActionConstant;
-  (...args: any): any;
 };
+
+export type CoercibleAction<ActionCreator> = ActionTypeCoercible &
+  ActionCreator;

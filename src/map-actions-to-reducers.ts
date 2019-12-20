@@ -7,6 +7,7 @@ type ActionReducerMapping = Map<
   ActionConstant,
   {
     synchronous: Array<Function>;
+    error: Array<Function>;
   }
 >;
 
@@ -15,16 +16,22 @@ export default function mapActionsToReducers(
 ): ActionReducerMapping {
   const mapping: ActionReducerMapping = new Map();
 
-  reducerDefinitions.forEach(({ actionType, reducer }) => {
+  reducerDefinitions.forEach(({ actionType, reducer, reducerType }) => {
     if (!mapping.has(actionType)) {
       mapping.set(actionType, {
         synchronous: [],
+        error: [],
       });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handlers = mapping.get(actionType)!;
-    handlers.synchronous.push(reducer);
+
+    if (reducerType === 'synchronous') {
+      handlers.synchronous.push(reducer);
+    } else if (reducerType === 'error') {
+      handlers.error.push(reducer);
+    }
   });
 
   return mapping;

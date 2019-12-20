@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ActionConstant } from './actions';
+import { ActionConstant, CoercibleAction } from './actions';
 import { Exception, VALUE } from '../action-failure';
 
 type Fn = (...args: any) => any;
@@ -10,30 +10,31 @@ export interface CreateAction {
   >;
 }
 
-type ActionCreator<Effect extends Fn> = {
-  [Symbol.toPrimitive](hint: string): ActionConstant;
-  toString(): string;
-} & Effect extends void
-  ? () => ActionSuccess<void>
+type ActionCreator<Effect extends void | Fn> = Effect extends void
+  ? CoercibleAction<() => ActionSuccess<void>>
   : Effect extends () => any
-  ? () => ActionResult<Effect>
+  ? CoercibleAction<() => ActionResult<Effect>>
   : Effect extends (input: infer Input, ...args: any) => any
-  ? (input: Input) => ActionResult<Effect>
+  ? CoercibleAction<(input: Input) => ActionResult<Effect>>
   : never;
 
-type ActionResult<Effect extends Fn> = ReturnType<Effect> extends Exception<
-  FailureType<Effect>
->
-  ? ActionFailure<ReturnType<Effect>[typeof VALUE]>
-  : ActionSuccess<ReturnType<Effect>>;
+type ActionResult<Effect extends Fn> = Effect extends (
+  ...args: any
+) => Exception<infer Failure>
+  ? ActionFailure<Failure>
+  : Effect extends (...args: any) => Exception<infer Failure> | infer Payload
+  ? ActionFailure<Failure> | ActionSuccess<Payload>
+  : Effect extends (...args: any) => infer Payload
+  ? ActionSuccess<Payload>
+  : never;
 
-type ActionSuccess<Payload> = {
+export type ActionSuccess<Payload> = {
   type: ActionConstant;
   error?: false;
   payload: Payload;
 };
 
-type ActionFailure<Payload> = {
+export type ActionFailure<Payload> = {
   type: ActionConstant;
   error: true;
   payload: Payload;

@@ -42,4 +42,15 @@ describe('mapActionsToReducers', () => {
       synchronous: [handler1, handler2],
     });
   });
+
+  it('adds error handlers to the correct list', () => {
+    const handler = jest.fn();
+
+    const map = mapActionsToReducers([handleAction.error(increment, handler)]);
+
+    expect(map.get(getActionType(increment))).toMatchObject({
+      synchronous: [],
+      error: [handler],
+    });
+  });
 });
