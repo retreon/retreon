@@ -42,7 +42,7 @@ interface HandleAction<State> {
 export interface ReducerDefinition {
   reducerType: 'synchronous' | 'error';
   actionType: ActionConstant;
-  reducer: Function;
+  reducer: (...args: any) => any;
 }
 
 type ReduxAction<ActionCreator> = ActionCreator extends (

@@ -1,3 +1,5 @@
+import { nothing } from 'immer';
+
 import createReducer from '../create-reducer';
 import createAction from '../create-action';
 import { failure } from '../action-failure';
@@ -57,6 +59,53 @@ describe('createReducer', () => {
 
       expect(onSuccess).not.toHaveBeenCalled();
       expect(onFailure).toHaveBeenCalled();
+    });
+
+    it('proxies mutation through immer', () => {
+      const increment = createAction('increment');
+
+      const initialState = { count: 0 };
+      const reducer = createReducer(initialState, handleAction => [
+        handleAction(increment, state => {
+          state.count += 1;
+        }),
+
+        handleAction(increment, state => {
+          state.count += 1;
+        }),
+      ]);
+
+      const state = reducer(undefined, increment());
+
+      // No mutation.
+      expect(initialState).toEqual({ count: 0 });
+      expect(state).toEqual({ count: 2 });
+    });
+
+    it('replaces the value when something is returned', () => {
+      const initialState = 0;
+      const reset = createAction('reset');
+
+      const reducer = createReducer(initialState, handleAction => [
+        handleAction(reset, () => initialState),
+      ]);
+
+      const state = reducer(10, reset());
+
+      expect(state).toBe(0);
+    });
+
+    it('wipes out the value when returning "nothing"', () => {
+      const reset = createAction('reset');
+      const initialState: void | number = 0;
+
+      const reducer = createReducer(initialState, handleAction => [
+        handleAction(reset, () => nothing),
+      ]);
+
+      const state = reducer(10, reset());
+
+      expect(state).toBe(undefined);
     });
   });
 

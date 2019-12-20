@@ -20,7 +20,7 @@ const assertValidArguments = (
 
 const handleAction = <
   ActionCreator extends ActionTypeCoercible,
-  Reducer extends Function
+  Reducer extends (...args: any) => any
 >(
   actionCreator: ActionCreator,
   reducer: Reducer,
@@ -36,7 +36,7 @@ const handleAction = <
 
 handleAction.error = <
   ActionCreator extends ActionTypeCoercible,
-  Reducer extends Function
+  Reducer extends (...args: any) => any
 >(
   actionCreator: ActionCreator,
   reducer: Reducer,
