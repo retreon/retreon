@@ -59,4 +59,26 @@ describe('createReducer', () => {
       expect(onFailure).toHaveBeenCalled();
     });
   });
+
+  describe('handleAction.error', () => {
+    it('is called for errors', () => {
+      const unstable = createAction('unstable', (fail: boolean) => {
+        if (fail) return failure('Testing failures');
+        return true;
+      });
+
+      const onSuccess = jest.fn();
+      const onFailure = jest.fn();
+
+      const reducer = createReducer(0, handleAction => [
+        handleAction(unstable, onSuccess),
+        handleAction.error(unstable, onFailure),
+      ]);
+
+      reducer(undefined, unstable(false));
+
+      expect(onSuccess).toHaveBeenCalled();
+      expect(onFailure).not.toHaveBeenCalled();
+    });
+  });
 });
