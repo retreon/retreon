@@ -54,15 +54,15 @@ type ReduxAction<ActionCreator> = ActionCreator extends (
 type SuccessPayload<ActionCreator extends (...args: any) => {}> = ReduxAction<
   ActionCreator
 > extends ActionFailure<any> | ActionSuccess<infer Payload>
-  ? ActionSuccess<Payload>
+  ? Payload
   : ReduxAction<ActionCreator> extends ActionSuccess<infer Payload>
-  ? ActionSuccess<Payload>
+  ? Payload
   : never;
 
 type FailurePayload<ActionCreator extends (...args: any) => {}> = ReduxAction<
   ActionCreator
 > extends ActionSuccess<any> | ActionFailure<infer Failure>
-  ? ActionFailure<Failure>
+  ? Failure
   : ReduxAction<ActionCreator> extends ActionFailure<infer Failure>
-  ? ActionFailure<Failure>
+  ? Failure
   : never;

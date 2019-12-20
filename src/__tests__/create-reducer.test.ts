@@ -27,7 +27,7 @@ describe('createReducer', () => {
 
   describe('handleAction', () => {
     it('calls the action reducer when it matches', () => {
-      const increment = createAction('increment', () => undefined);
+      const increment = createAction('increment', () => 'yo');
       const actionReducer = jest.fn();
 
       const reducer = createReducer(0, handleAction => [
@@ -36,7 +36,7 @@ describe('createReducer', () => {
 
       const action = increment();
       reducer(undefined, action);
-      expect(actionReducer).toHaveBeenCalledWith(0, action);
+      expect(actionReducer).toHaveBeenCalledWith(0, action.payload);
     });
 
     it('ignores action errors', () => {

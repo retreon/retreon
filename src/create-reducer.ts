@@ -18,7 +18,7 @@ function createReducer<State>(initialState: State, reducerFactory: Function) {
       action.error === true ? handlers.error : handlers.synchronous;
 
     return reducersForActionType.reduce(
-      (state, reducer) => reducer(state, action),
+      (state, reducer) => reducer(state, action.payload),
       state,
     );
   };
