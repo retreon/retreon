@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type ActionConstant = string | symbol;
 
 // Return the type of the parameter, or void if none is accepted. Effects

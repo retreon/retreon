@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { InputType, ActionConstant } from './types/actions';
 import { CreateAction } from './types/create-action';
 import { isFailure, getValue } from './action-failure';

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-constant-condition */
+/* eslint-disable no-constant-condition */
 import { Middleware, AnyAction } from 'redux';
 
 /**

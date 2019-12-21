@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionConstant, CoercibleAction } from './actions';
 import { Exception, VALUE } from '../action-failure';
 

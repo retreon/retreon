@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { nothing, Draft } from 'immer';
 
 import { Action, ActionConstant } from './actions';
