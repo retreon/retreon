@@ -1,48 +1,87 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { nothing } from 'immer';
+
 import { Action, ActionConstant } from './actions';
 import { ActionSuccess, ActionFailure } from './create-action';
 
-interface ReducerFactory<State> {
+export interface CreateReducer {
+  /**
+   * Creates a standard redux reducer.
+   * @param initialState An initial state.
+   * @param reducerFactory A function which returns a list of action handlers.
+   * @example
+   * createReducer({ count: 0 }, handleAction => [
+   *   handleAction(increment, (state) => {}),
+   * ])
+   */
+  <State>(
+    initialState: State,
+    reducerFactory: ReducerDefinitionFactory<State>,
+  ): (state: void | State, action: Action<any>) => State;
+}
+
+interface ReducerDefinitionFactory<State> {
+  /**
+   * Use this callback to define all your reducers.
+   * @param handleAction Associates an action with a reducer.
+   * @return A list of reducers defined using `handleAction(...)`.
+   * @example
+   * createReducer(0, handleAction => [
+   *   handleAction(action, reducer),
+   * ])
+   */
   (handleAction: HandleAction<State>): Array<ReducerDefinition>;
 }
 
-export interface CreateReducer {
-  <State>(initialState: State, reducerFactory: ReducerFactory<State>): (
-    state: void | State,
-    action: Action<any>,
-  ) => State;
-}
-
 interface HandleAction<State> {
-  // handleAction(...)
+  /**
+   * Associates a reducer with an action creator.
+   * @param actionCreator An action creator defined with `createAction(...)`.
+   * @param reducer A handler invoked whenever the action is dispatched. It's
+   * okay to mutate state here.
+   * @example
+   * handleAction(increment, state => {
+   *   state.count++
+   * })
+   */
   <
     ActionCreator extends (...args: any) => any,
     Reducer extends (
       state: State,
       action: SuccessPayload<ActionCreator>,
-    ) => void
+    ) => NextState<State>
   >(
     actionCreator: ActionCreator,
     reducer: Reducer,
   ): ReducerDefinition;
 
-  // handleAction.error(...)
+  /**
+   * Associates an action with an error handler.
+   * @param reducer A handler invoked whenever the action is dispatched. It's
+   * okay to mutate state here.
+   * @example
+   * handleAction.error(loadTheme, state => {
+   *   state.theme = THEME_FALLBACK
+   * })
+   */
   error<
     ActionCreator extends (...args: any) => any,
     Reducer extends (
       state: State,
-      action: FailurePayload<ActionCreator>,
-    ) => void
+      actionCreator: FailurePayload<ActionCreator>,
+    ) => NextState<State>
   >(
-    actionCreator: ActionCreator,
+    action: ActionCreator,
     reducer: Reducer,
   ): ReducerDefinition;
 }
 
+type NextState<State> = void | State | typeof nothing;
+
 export interface ReducerDefinition {
-  reducerType: 'synchronous' | 'error';
-  actionType: ActionConstant;
-  reducer: (...args: any) => any;
+  readonly reducerType: 'synchronous' | 'error';
+  readonly actionType: ActionConstant;
+  readonly reducer: (...args: any) => any;
 }
 
 type ReduxAction<ActionCreator> = ActionCreator extends (

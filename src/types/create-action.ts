@@ -5,6 +5,16 @@ import { Exception, VALUE } from '../action-failure';
 type Fn = (...args: any) => any;
 
 export interface CreateAction {
+  /**
+   * Returns a function which generates actions of the given type.
+   * @param type A unique name which describes the action.
+   * @param effect Something to run when the action is invoked. Whatever it
+   * returns becomes the action payload. Return `failure(...)` to signal an error.
+   * @example
+   * createAction('settings/load-theme', () => {
+   *   return localStorage.getItem('theme')
+   * })
+   */
   <Effect extends Fn>(type: ActionConstant, effect?: Effect): ActionCreator<
     Effect
   >;
@@ -29,15 +39,13 @@ type ActionResult<Effect extends Fn> = Effect extends (
   : never;
 
 export type ActionSuccess<Payload> = {
-  type: ActionConstant;
-  error?: false;
+  readonly type: ActionConstant;
+  readonly error?: false;
   payload: Payload;
 };
 
 export type ActionFailure<Payload> = {
-  type: ActionConstant;
-  error: true;
+  readonly type: ActionConstant;
+  readonly error: true;
   payload: Payload;
 };
-
-type FailureType<Effect extends Fn> = ReturnType<Effect>[typeof VALUE];
