@@ -1,5 +1,5 @@
 import { ActionConstant, CoercibleAction } from './actions';
-import { Exception, VALUE } from '../action-failure';
+import { Exception } from '../action-failure';
 
 type Fn = (...args: any) => any;
 
