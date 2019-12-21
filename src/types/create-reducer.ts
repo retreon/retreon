@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { nothing } from 'immer';
+import { nothing, Draft } from 'immer';
 
 import { Action, ActionConstant } from './actions';
 import { ActionSuccess, ActionFailure } from './create-action';
@@ -47,7 +47,7 @@ interface HandleAction<State> {
   <
     ActionCreator extends (...args: any) => any,
     Reducer extends (
-      state: State,
+      state: Draft<State>,
       action: SuccessPayload<ActionCreator>,
     ) => NextState<State>
   >(
@@ -67,7 +67,7 @@ interface HandleAction<State> {
   error<
     ActionCreator extends (...args: any) => any,
     Reducer extends (
-      state: State,
+      state: Draft<State>,
       actionCreator: FailurePayload<ActionCreator>,
     ) => NextState<State>
   >(
