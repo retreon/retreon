@@ -14,10 +14,12 @@ export type Action<Payload> = {
   error?: boolean;
 };
 
-export type ActionTypeCoercible = {
+export interface ActionTypeCoercible {
   [Symbol.toPrimitive](hint: string): ActionConstant;
   toString(): ActionConstant;
-};
+}
 
-export type CoercibleAction<ActionCreator> = ActionTypeCoercible &
-  ActionCreator;
+export interface CoercibleAction<Args extends Array<any>, RetVal>
+  extends ActionTypeCoercible {
+  (...args: Args): RetVal;
+}

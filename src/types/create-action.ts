@@ -1,7 +1,7 @@
 import { ActionConstant, CoercibleAction } from './actions';
 import { Exception } from '../action-failure';
 
-type Fn = (...args: any) => any;
+type AnyFunction = (...args: any) => any;
 
 export interface CreateAction {
   /**
@@ -14,37 +14,51 @@ export interface CreateAction {
    *   return localStorage.getItem('theme')
    * })
    */
-  <Effect extends Fn>(type: ActionConstant, effect?: Effect): ActionCreator<
-    Effect
-  >;
+  (type: ActionConstant): CoercibleAction<[], VoidAction>;
+
+  // No arguments.
+  <Effect extends () => any>(
+    type: ActionConstant,
+    effect: Effect,
+  ): CoercibleAction<[], ActionForEffect<Effect>>;
+
+  // At least one argument.
+  <Effect extends (arg: any, ...args: any) => any>(
+    type: ActionConstant,
+    effect: Effect,
+  ): Effect extends (arg: infer T, ...args: any) => any
+    ? CoercibleAction<[T], ActionForEffect<Effect>>
+    : never;
 }
 
-type ActionCreator<Effect extends void | Fn> = Effect extends void
-  ? CoercibleAction<() => ActionSuccess<void>>
-  : Effect extends () => any
-  ? CoercibleAction<() => ActionResult<Effect>>
-  : Effect extends (input: infer Input, ...args: any) => any
-  ? CoercibleAction<(input: Input) => ActionResult<Effect>>
-  : never;
+type NotException<Value> = Value extends Exception<any> ? never : Value;
 
-type ActionResult<Effect extends Fn> = Effect extends (
-  ...args: any
-) => Exception<infer Failure>
+// Turns the return value of an effect into an action object. This is the
+// most difficult type signature of `createAction(...)`. Avoid changing it.
+type ActionForEffect<Effect extends AnyFunction> = ReturnType<
+  Effect
+> extends Exception<infer Failure> // The action always fails.
   ? ActionFailure<Failure>
-  : Effect extends (...args: any) => Exception<infer Failure> | infer Payload
+  : ReturnType<Effect> extends NotException<ReturnType<Effect>> // This action never fails.
+  ? ActionSuccess<ReturnType<Effect>>
+  : ReturnType<Effect> extends Exception<infer Failure> | infer Payload // This action *might* fail.
   ? ActionFailure<Failure> | ActionSuccess<Payload>
-  : Effect extends (...args: any) => infer Payload
-  ? ActionSuccess<Payload>
-  : never;
+  : never; // This action is drunk.
+
+// Void actions don't carry a payload and can never fail.
+export type VoidAction = {
+  readonly type: ActionConstant;
+};
 
 export type ActionSuccess<Payload> = {
   readonly type: ActionConstant;
-  readonly error?: false;
-  payload: Payload;
+  readonly error?: false; // Purely for type inference.
+  readonly payload: Payload;
 };
 
+// Failed actions carry an arbitrary payload and always have
 export type ActionFailure<Payload> = {
   readonly type: ActionConstant;
   readonly error: true;
-  payload: Payload;
+  readonly payload: Payload;
 };
