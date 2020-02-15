@@ -1,22 +1,17 @@
-import { InputType, ActionConstant } from '../types/actions';
+import { ActionConstant } from '../types/actions';
 import { CreateAction } from '../types/create-action';
 import { isFailure, getValue } from './failure';
-import Phase from '../phase-constants';
+import createAsyncAction from './create-async-action';
+import bindActionType from './bind-action-type';
 
-const allowActionTypeCoercion = <Fn extends Function>(
-  actionType: ActionConstant,
-  fn: Fn,
-) =>
-  Object.assign(fn, {
-    [Symbol.toPrimitive]: () => actionType,
-    toString: () => actionType,
-  });
-
-const createAction = <Effect extends (...args: any) => any>(
-  actionType: ActionConstant,
-  effect?: Effect,
-) =>
-  allowActionTypeCoercion(actionType, (input: InputType<Effect>) => {
+// Synchronous action creator.
+//
+// Example:
+// createAction('add-file', file => {
+//   return { url: URL.createObjectURL(file) }
+// })
+const createAction = (actionType: ActionConstant, effect?: Function) => {
+  const executeEffectAndReturnAction = (input: any) => {
     if (effect === undefined) {
       if (input === undefined) {
         return { type: actionType };
@@ -36,32 +31,20 @@ const createAction = <Effect extends (...args: any) => any>(
     }
 
     return { type: actionType, payload };
-  });
+  };
 
-createAction.async = <
-  TReturn,
-  Effect extends (...args: any) => Promise<TReturn>
->(
-  actionType: ActionConstant,
-  effect: Effect,
-) => {
-  async function* createAsyncAction(): AsyncGenerator<any, TReturn> {
-    yield {
-      type: actionType,
-      meta: { phase: Phase.Optimistic },
-    };
-
-    const payload = await effect();
-
-    yield {
-      type: actionType,
-      payload,
-    };
-
-    return payload;
-  }
-
-  return allowActionTypeCoercion(actionType, createAsyncAction);
+  return bindActionType(actionType, executeEffectAndReturnAction);
 };
 
+// Asynchronous action creator.
+//
+// Example:
+// createAction.async('update-profile-photo', async photo => {
+//   await http.put('/users/self/profile-photo/', photo)
+// })
+createAction.async = createAsyncAction;
+
+// These types become completely unmaintainable when you try to write them
+// with the implementation. It's *significantly* easier to keep them in
+// a separate file and re-cast the implementation to a more precise type.
 export default (createAction as unknown) as CreateAction;

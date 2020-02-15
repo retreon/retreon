@@ -16,6 +16,7 @@ export interface CreateAction {
    */
   (type: ActionConstant): CoercibleAction<[], VoidAction>;
 
+  // No effect. Just pass a payload.
   <T>(type: ActionConstant): CoercibleAction<[T], ActionSuccess<T>>;
 
   // No arguments.
@@ -43,7 +44,7 @@ export interface CreateAction {
   >;
 }
 
-type NotException<Value> = Value extends Exception<any> ? never : Value;
+type AnythingButException<Value> = Value extends Exception<any> ? never : Value;
 
 // Turns the return value of an effect into an action object. This is the
 // most difficult type signature of `createAction(...)`. Avoid changing it.
@@ -51,11 +52,11 @@ type ActionForEffect<Effect extends AnyFunction> = ReturnType<
   Effect
 > extends Exception<infer Failure> // The action always fails.
   ? ActionFailure<Failure>
-  : ReturnType<Effect> extends NotException<ReturnType<Effect>> // This action never fails.
+  : ReturnType<Effect> extends AnythingButException<ReturnType<Effect>> // The action never fails.
   ? ActionSuccess<ReturnType<Effect>>
-  : ReturnType<Effect> extends Exception<infer Failure> | infer Payload // This action *might* fail.
+  : ReturnType<Effect> extends Exception<infer Failure> | infer Payload // The action *might* fail.
   ? ActionFailure<Failure> | ActionSuccess<Payload>
-  : never; // This action is drunk.
+  : never; // The action is drunk.
 
 // Void actions don't carry a payload and can never fail.
 export type VoidAction = {
