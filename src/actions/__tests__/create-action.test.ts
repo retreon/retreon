@@ -1,7 +1,7 @@
 import createAction from '../create-action';
-import { failure } from '../action-failure';
-import { expectType, expectNotType } from '../types/assertions';
-import Phase from '../phase-constants';
+import { failure } from '../failure';
+import { expectType, expectNotType } from '../../types/assertions';
+import Phase from '../../phase-constants';
 
 describe('createAction', () => {
   it('returns an action creator', () => {

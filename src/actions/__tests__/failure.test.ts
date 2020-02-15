@@ -1,4 +1,4 @@
-import { failure, isFailure, getValue } from '../action-failure';
+import { failure, isFailure, getValue } from '../failure';
 
 describe('action-failure', () => {
   describe('failure()', () => {

@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 
-import middleware from '../redux-middleware';
+import middleware from '../async-generator-middleware';
 
 describe('Redux middleware', () => {
   const setup = () => {

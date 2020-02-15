@@ -1,6 +1,5 @@
 import handleAction from '../handle-action';
-import createAction from '../create-action';
-import { failure } from '../action-failure';
+import { createAction, failure } from '../../index';
 
 describe('handleAction', () => {
   const increment = createAction('increment', () => undefined);

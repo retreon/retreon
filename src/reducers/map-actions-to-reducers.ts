@@ -1,7 +1,7 @@
 import { produce } from 'immer';
 
-import { ReducerDefinition } from './types/create-reducer';
-import { ActionConstant } from './types/actions';
+import { ReducerDefinition } from '../types/create-reducer';
+import { ActionConstant } from '../types/actions';
 
 type Fn = (...args: any) => any;
 

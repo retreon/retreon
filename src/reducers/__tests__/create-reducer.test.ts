@@ -1,9 +1,7 @@
 import { nothing } from 'immer';
 
-import createReducer from '../create-reducer';
-import createAction from '../create-action';
-import { failure } from '../action-failure';
-import { expectType } from '../types/assertions';
+import { createReducer, createAction, failure } from '../../index';
+import { expectType } from '../../types/assertions';
 
 describe('createReducer', () => {
   it('returns a reducer', () => {

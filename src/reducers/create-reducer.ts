@@ -1,5 +1,5 @@
-import { Action } from './types/actions';
-import { CreateReducer } from './types/create-reducer';
+import { Action } from '../types/actions';
+import { CreateReducer } from '../types/create-reducer';
 import handleAction from './handle-action';
 import mapActionsToReducers from './map-actions-to-reducers';
 

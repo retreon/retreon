@@ -1,4 +1,4 @@
-import createAction from '../create-action';
+import { createAction } from '../../index';
 import getActionType from '../get-action-type';
 
 describe('getActionType', () => {

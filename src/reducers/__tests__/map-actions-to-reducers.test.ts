@@ -1,6 +1,6 @@
 import mapActionsToReducers from '../map-actions-to-reducers';
 import handleAction from '../handle-action';
-import createAction from '../create-action';
+import { createAction } from '../../index';
 import getActionType from '../get-action-type';
 
 describe('mapActionsToReducers', () => {
