@@ -19,7 +19,7 @@ Retreon aims to provide good patterns and tools out of the box.
 import { createAction, createReducer } from 'retreon'
 
 // Define redux actions using `createAction(...)`
-const changeTheme = createAction('change-theme')
+const changeTheme = createAction<string>('change-theme')
 changeTheme('dark') // { type: 'change-theme', payload: 'dark' }
 
 // Create a reducer to handle that action.

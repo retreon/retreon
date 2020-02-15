@@ -16,6 +16,8 @@ export interface CreateAction {
    */
   (type: ActionConstant): CoercibleAction<[], VoidAction>;
 
+  <T>(type: ActionConstant): CoercibleAction<[T], ActionSuccess<T>>;
+
   // No arguments.
   <Effect extends () => any>(
     type: ActionConstant,

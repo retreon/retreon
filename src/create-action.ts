@@ -17,7 +17,11 @@ const createAction = <Effect extends (...args: any) => any>(
 ) =>
   allowActionTypeCoercion(actionType, (input: InputType<Effect>) => {
     if (effect === undefined) {
-      return { type: actionType };
+      if (input === undefined) {
+        return { type: actionType };
+      }
+
+      return { type: actionType, payload: input };
     }
 
     const payload = effect(input);

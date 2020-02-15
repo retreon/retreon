@@ -36,12 +36,21 @@ describe('createAction', () => {
     expect(effect).toHaveBeenCalledWith(1);
   });
 
-  it('always uses an undefined payload if no effect is provided', () => {
+  it('uses an undefined payload if no effect is provided', () => {
     const increment = createAction('increment');
 
     expect(increment()).toEqual({
       type: 'increment',
     });
+  });
+
+  it('uses the argument as payload when no effect was provided', () => {
+    const increment = createAction<string>('action-type');
+    const args: Parameters<typeof increment> = ['some content'];
+    const action = increment(...args);
+
+    expectType<string>(action.payload);
+    expect(action.payload).toBe(args[0]);
   });
 
   describe('type', () => {
