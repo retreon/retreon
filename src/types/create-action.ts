@@ -31,6 +31,16 @@ export interface CreateAction {
   ): Effect extends (arg: infer T, ...args: any) => any
     ? CoercibleAction<[T], ActionForEffect<Effect>>
     : never;
+
+  async<Effect extends () => Promise<any>>(
+    type: ActionConstant,
+    effect: Effect,
+  ): CoercibleAction<
+    [],
+    Effect extends () => Promise<infer Payload>
+      ? AsyncGenerator<void, Payload>
+      : never
+  >;
 }
 
 type NotException<Value> = Value extends Exception<any> ? never : Value;

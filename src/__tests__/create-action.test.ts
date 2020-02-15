@@ -1,6 +1,7 @@
 import createAction from '../create-action';
 import { failure } from '../action-failure';
 import { expectType, expectNotType } from '../types/assertions';
+import Phase from '../phase-constants';
 
 describe('createAction', () => {
   it('returns an action creator', () => {
@@ -106,6 +107,50 @@ describe('createAction', () => {
       const args: Parameters<typeof requiredArg> = ['hello world'];
       const action = requiredArg(...args);
       expectType<number>(action.payload);
+    });
+  });
+
+  describe('.async(...)', () => {
+    it('returns an async generator', async () => {
+      const later = createAction.async('later', async () => 'result');
+      const result = later();
+
+      expectType<AsyncGenerator<any, string>>(result);
+    });
+
+    it('coerces to the action constant', () => {
+      const actionType = 'yolo';
+      const later = createAction.async(actionType, async () => {});
+
+      expect(String(later)).toEqual(actionType);
+      expect(later[Symbol.toPrimitive]('default')).toBe(actionType);
+    });
+
+    it('dispatches actions when created and after finishing', async () => {
+      const resolveValue = 'async function return value';
+      const later = createAction.async('later', async () => resolveValue);
+      const result = later();
+
+      await expect(result.next()).resolves.toEqual({
+        done: false,
+        value: {
+          type: String(later),
+          meta: { phase: Phase.Optimistic },
+        },
+      });
+
+      await expect(result.next()).resolves.toEqual({
+        done: false,
+        value: {
+          type: String(later),
+          payload: resolveValue,
+        },
+      });
+
+      await expect(result.next()).resolves.toEqual({
+        done: true,
+        value: resolveValue,
+      });
     });
   });
 });

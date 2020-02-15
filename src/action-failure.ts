@@ -5,7 +5,10 @@ export interface Exception<Value> {
   [VALUE]: Value;
 }
 
-export const isFailure = <Input>(data: Input) => VALUE in Object(data);
+export const isFailure = <T, Anything>(
+  data: Exception<T> | Anything,
+): data is Exception<T> => VALUE in Object(data);
+
 export const getValue = <Value>(error: Exception<Value>) => error[VALUE];
 
 /**
