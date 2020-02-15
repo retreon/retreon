@@ -16,6 +16,6 @@ export const getValue = <Value>(error: Exception<Value>) => error[VALUE];
  *   return failure(ErrorTypes.ApiUnavailable)
  * })
  */
-export const failure = <Value>(value: Value): Exception<Value> => ({
-  [VALUE]: value,
-});
+export function failure<Value>(value: Value): Exception<Value> {
+  return { [VALUE]: value };
+}
