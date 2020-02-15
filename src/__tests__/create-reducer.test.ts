@@ -3,6 +3,7 @@ import { nothing } from 'immer';
 import createReducer from '../create-reducer';
 import createAction from '../create-action';
 import { failure } from '../action-failure';
+import { expectType } from '../types/assertions';
 
 describe('createReducer', () => {
   it('returns a reducer', () => {
@@ -17,6 +18,7 @@ describe('createReducer', () => {
 
     const state = reducer(undefined, { type: '@@init' });
 
+    expectType<{ initial: string }>(state);
     expect(state).toBe(initialState);
   });
 
@@ -24,6 +26,7 @@ describe('createReducer', () => {
     const reducer = createReducer(1, () => []);
     const state = reducer(5, { type: 'random' });
 
+    expectType<number>(state);
     expect(state).toBe(5);
   });
 
@@ -107,6 +110,17 @@ describe('createReducer', () => {
 
       expect(state).toBe(undefined);
     });
+
+    it('infers state and payload types', () => {
+      const add = createAction('add', (value: string) => value);
+
+      createReducer(0, handleAction => [
+        handleAction(add, (state, value) => {
+          expectType<number>(state);
+          expectType<string>(value);
+        }),
+      ]);
+    });
   });
 
   describe('handleAction.error', () => {
@@ -128,6 +142,17 @@ describe('createReducer', () => {
 
       expect(onSuccess).toHaveBeenCalled();
       expect(onFailure).not.toHaveBeenCalled();
+    });
+
+    it('infers error types', () => {
+      const die = createAction('type', () => failure('content'));
+
+      createReducer(0, handleAction => [
+        handleAction(die, (state, error) => {
+          expectType<number>(state);
+          expectType<string>(error);
+        }),
+      ]);
     });
   });
 });
