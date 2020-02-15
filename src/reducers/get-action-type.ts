@@ -1,7 +1,7 @@
 // `createAction(...)` coerces to its action constant. This utility function
 // grabs that constant.
 import { ActionConstant, ActionTypeCoercible } from '../types/actions';
-import assert from '../assert';
+import assert from '../utils/assert';
 
 export default function getActionType(
   actionCreator: symbol | string | ActionTypeCoercible,

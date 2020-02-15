@@ -1,6 +1,6 @@
 import { ActionTypeCoercible } from '../types/actions';
 import { ReducerDefinition } from '../types/create-reducer';
-import assert from '../assert';
+import assert from '../utils/assert';
 import getActionType from './get-action-type';
 
 const assertValidArguments = (

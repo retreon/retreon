@@ -28,6 +28,22 @@ describe('createReducer', () => {
     expect(state).toBe(5);
   });
 
+  // Gracefully survives circular imports between actions and reducers.
+  it('lazily instantiates the action-reducer mappings', () => {
+    const factory = jest.fn(() => []);
+    const reducer = createReducer(1, factory);
+
+    expect(factory).not.toHaveBeenCalled();
+    reducer(undefined, { type: '@@init' });
+    expect(factory).toHaveBeenCalled();
+  });
+
+  it('provides fast feedback if the factory function is invalid', () => {
+    const fail = () => createReducer(0, undefined as any);
+
+    expect(fail).toThrow(/expects a function/i);
+  });
+
   describe('handleAction', () => {
     it('calls the action reducer when it matches', () => {
       const increment = createAction('increment', () => 'yo');
