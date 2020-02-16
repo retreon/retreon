@@ -1,7 +1,7 @@
 import createAction from '../create-action';
 import { failure } from '../failure';
 import { expectType, expectNotType } from '../../types/assertions';
-import Phase from '../../phase-constants';
+import Phase from '../../constants/phase';
 import {
   OptimisticAction,
   ActionSuccess,

@@ -1,5 +1,5 @@
 import { ActionConstant } from '../types/actions';
-import Phase from '../phase-constants';
+import Phase from '../constants/phase';
 import bindActionType from './bind-action-type';
 
 export default function createAsyncAction<

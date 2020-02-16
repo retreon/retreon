@@ -3,7 +3,7 @@ import {
   ActionFailure,
   OptimisticAction,
 } from '../../types/actions';
-import Phase from '../../phase-constants';
+import Phase from '../../constants/phase';
 import {
   isActionSuccess,
   isActionFailure,

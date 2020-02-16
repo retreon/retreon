@@ -1,4 +1,4 @@
-import Phase from '../phase-constants';
+import Phase from '../constants/phase';
 
 export type ActionConstant = string | symbol;
 export type Action<Payload> =

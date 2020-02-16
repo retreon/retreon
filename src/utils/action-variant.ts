@@ -4,7 +4,7 @@ import {
   ActionFailure,
   OptimisticAction,
 } from '../types/actions';
-import Phase from '../phase-constants';
+import Phase from '../constants/phase';
 
 /**
  * A set of utilities to determine the FSA "variant" (error, success,
