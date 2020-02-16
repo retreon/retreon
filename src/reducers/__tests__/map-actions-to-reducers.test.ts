@@ -21,11 +21,11 @@ describe('mapActionsToReducers', () => {
     ]);
 
     expect(map.get(getActionType(increment))).toMatchObject({
-      synchronous: [expect.any(Function)],
+      success: [expect.any(Function)],
     });
 
     expect(map.get(getActionType(decrement))).toMatchObject({
-      synchronous: [expect.any(Function)],
+      success: [expect.any(Function)],
     });
   });
 
@@ -39,7 +39,7 @@ describe('mapActionsToReducers', () => {
     ]);
 
     expect(map.get(getActionType(increment))).toMatchObject({
-      synchronous: [expect.any(Function), expect.any(Function)],
+      success: [expect.any(Function), expect.any(Function)],
     });
   });
 
@@ -49,7 +49,7 @@ describe('mapActionsToReducers', () => {
     const map = mapActionsToReducers([handleAction.error(increment, handler)]);
 
     expect(map.get(getActionType(increment))).toMatchObject({
-      synchronous: [],
+      success: [],
       error: [expect.any(Function)],
     });
   });

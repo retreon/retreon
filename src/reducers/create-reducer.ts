@@ -34,7 +34,7 @@ function createReducer<State>(initialState: State, reducerFactory: Function) {
 
     const reducersForActionType = isActionFailure(action)
       ? handlers.error
-      : handlers.synchronous;
+      : handlers.success;
 
     return reducersForActionType.reduce(
       (state, reducer) => reducer(state, action.payload),

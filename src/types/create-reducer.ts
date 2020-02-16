@@ -7,6 +7,7 @@ import {
   ActionFailure,
   OptimisticAction,
 } from './actions';
+import ReducerType from '../constants/reducer-type';
 
 export interface CreateReducer {
   /**
@@ -105,7 +106,7 @@ interface HandleAction<State> {
 type NextState<State> = void | State | typeof nothing;
 
 export interface ReducerDefinition {
-  readonly reducerType: 'synchronous' | 'error';
+  readonly reducerType: ReducerType;
   readonly actionType: ActionConstant;
   readonly reducer: (...args: any) => any;
 }

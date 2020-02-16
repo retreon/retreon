@@ -2,6 +2,7 @@ import { produce } from 'immer';
 
 import { ReducerDefinition } from '../types/create-reducer';
 import { ActionConstant } from '../types/actions';
+import ReducerType from '../constants/reducer-type';
 
 type Fn = (...args: any) => any;
 
@@ -10,7 +11,7 @@ type Fn = (...args: any) => any;
 type ActionReducerMapping = Map<
   ActionConstant,
   {
-    synchronous: Array<Fn>;
+    success: Array<Fn>;
     error: Array<Fn>;
   }
 >;
@@ -23,7 +24,7 @@ export default function mapActionsToReducers(
   reducerDefinitions.forEach(({ actionType, reducer, reducerType }) => {
     if (!mapping.has(actionType)) {
       mapping.set(actionType, {
-        synchronous: [],
+        success: [],
         error: [],
       });
     }
@@ -32,9 +33,9 @@ export default function mapActionsToReducers(
     const handlers = mapping.get(actionType)!;
     const immutableReducer = produce(reducer);
 
-    if (reducerType === 'synchronous') {
-      handlers.synchronous.push(immutableReducer);
-    } else if (reducerType === 'error') {
+    if (reducerType === ReducerType.Success) {
+      handlers.success.push(immutableReducer);
+    } else if (reducerType === ReducerType.Error) {
       handlers.error.push(immutableReducer);
     }
   });

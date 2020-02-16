@@ -2,6 +2,7 @@ import { ActionTypeCoercible } from '../types/actions';
 import { ReducerDefinition } from '../types/create-reducer';
 import assert from '../utils/assert';
 import getActionType from './get-action-type';
+import ReducerType from '../constants/reducer-type';
 
 const assertValidArguments = (
   actionCreator: ActionTypeCoercible,
@@ -29,7 +30,7 @@ const handleAction = <
 
   return {
     actionType: getActionType(actionCreator),
-    reducerType: 'synchronous',
+    reducerType: ReducerType.Success,
     reducer,
   };
 };
@@ -45,7 +46,7 @@ handleAction.error = <
 
   return {
     actionType: getActionType(actionCreator),
-    reducerType: 'error',
+    reducerType: ReducerType.Error,
     reducer,
   };
 };
