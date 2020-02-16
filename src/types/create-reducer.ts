@@ -5,6 +5,7 @@ import {
   ActionConstant,
   ActionSuccess,
   ActionFailure,
+  OptimisticAction,
 } from './actions';
 
 export interface CreateReducer {
@@ -60,6 +61,7 @@ interface HandleAction<State> {
 
   /**
    * Associates an action with an error handler.
+   * @param actionCreator An action creator defined with `createAction(...)`.
    * @param reducer A handler invoked whenever the action is dispatched. It's
    * okay to mutate state here.
    * @example
@@ -71,10 +73,31 @@ interface HandleAction<State> {
     ActionCreator extends (...args: any) => any,
     Reducer extends (
       state: Draft<State>,
-      actionCreator: FailurePayload<ActionCreator>,
+      action: FailurePayload<ActionCreator>,
     ) => NextState<State>
   >(
-    action: ActionCreator,
+    actionCreator: ActionCreator,
+    reducer: Reducer,
+  ): ReducerDefinition;
+
+  /**
+   * Associates an async action with an optimistic handler.
+   * @param actionCreator An action creator defined with `createAction.async(...)`.
+   * @param reducer A handler invoked whenever the action is dispatched. It's
+   * okay to mutate state here.
+   * @example
+   * handleAction.optimistic(search, state => {
+   *   state.loading = true
+   * })
+   */
+  optimistic<
+    ActionCreator extends (...args: any) => AsyncGenerator,
+    Reducer extends (
+      state: Draft<State>,
+      action: OptimisticPayload<ActionCreator>,
+    ) => NextState<State>
+  >(
+    actionCreator: ActionCreator,
     reducer: Reducer,
   ): ReducerDefinition;
 }
@@ -107,4 +130,12 @@ type FailurePayload<ActionCreator extends (...args: any) => {}> = ReduxAction<
   ? Failure
   : ReduxAction<ActionCreator> extends ActionFailure<infer Failure>
   ? Failure
+  : never;
+
+type OptimisticPayload<
+  ActionCreator extends (...args: any) => AsyncGenerator<any>
+> = ActionCreator extends (...args: any) => AsyncGenerator<infer Action>
+  ? Action extends OptimisticAction<infer Payload> | ActionSuccess<any>
+    ? Payload
+    : never
   : never;

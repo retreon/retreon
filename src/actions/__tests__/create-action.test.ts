@@ -2,7 +2,11 @@ import createAction from '../create-action';
 import { failure } from '../failure';
 import { expectType, expectNotType } from '../../types/assertions';
 import Phase from '../../phase-constants';
-import { OptimisticAction, ActionSuccess } from '../../types/actions';
+import {
+  OptimisticAction,
+  ActionSuccess,
+  VoidAction,
+} from '../../types/actions';
 import {
   isActionSuccess,
   isOptimisticAction,
@@ -44,8 +48,10 @@ describe('createAction', () => {
 
   it('uses an undefined payload if no effect is provided', () => {
     const increment = createAction('increment');
+    const action = increment();
 
-    expect(increment()).toEqual({
+    expectType<VoidAction>(action);
+    expect(action).toEqual({
       type: 'increment',
     });
   });
