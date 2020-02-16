@@ -1,7 +1,11 @@
 import { nothing, Draft } from 'immer';
 
-import { Action, ActionConstant } from './actions';
-import { ActionSuccess, ActionFailure } from './create-action';
+import {
+  Action,
+  ActionConstant,
+  ActionSuccess,
+  ActionFailure,
+} from './actions';
 
 export interface CreateReducer {
   /**

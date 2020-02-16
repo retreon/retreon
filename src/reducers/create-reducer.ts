@@ -4,6 +4,7 @@ import handleAction from './handle-action';
 import mapActionsToReducers from './map-actions-to-reducers';
 import callOnce from '../utils/call-once';
 import assert from '../utils/assert';
+import { isActionFailure } from '../utils/action-variant';
 
 function createReducer<State>(initialState: State, reducerFactory: Function) {
   assert(
@@ -31,8 +32,9 @@ function createReducer<State>(initialState: State, reducerFactory: Function) {
     const handlers = actionMap.get(action.type);
     if (!handlers) return state;
 
-    const reducersForActionType =
-      action.error === true ? handlers.error : handlers.synchronous;
+    const reducersForActionType = isActionFailure(action)
+      ? handlers.error
+      : handlers.synchronous;
 
     return reducersForActionType.reduce(
       (state, reducer) => reducer(state, action.payload),

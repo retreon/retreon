@@ -1,9 +1,16 @@
-import { ActionConstant, CoercibleAction } from './actions';
+import {
+  ActionConstant,
+  CoercibleAction,
+  ActionSuccess,
+  ActionFailure,
+  VoidAction,
+} from './actions';
 import { Exception } from '../actions/failure';
+import { CreateAsyncAction } from './create-async-action';
 
 type AnyFunction = (...args: any) => any;
 
-export interface CreateAction {
+export interface CreateAction extends CreateAsyncAction {
   /**
    * Returns a function which generates actions of the given type.
    * @param type A unique name which describes the action.
@@ -32,16 +39,6 @@ export interface CreateAction {
   ): Effect extends (arg: infer T, ...args: any) => any
     ? CoercibleAction<[T], ActionForEffect<Effect>>
     : never;
-
-  async<Effect extends () => Promise<any>>(
-    type: ActionConstant,
-    effect: Effect,
-  ): CoercibleAction<
-    [],
-    Effect extends () => Promise<infer Payload>
-      ? AsyncGenerator<void, Payload>
-      : never
-  >;
 }
 
 type AnythingButException<Value> = Value extends Exception<any> ? never : Value;
@@ -57,21 +54,3 @@ type ActionForEffect<Effect extends AnyFunction> = ReturnType<
   : ReturnType<Effect> extends Exception<infer Failure> | infer Payload // The action *might* fail.
   ? ActionFailure<Failure> | ActionSuccess<Payload>
   : never; // The action is drunk.
-
-// Void actions don't carry a payload and can never fail.
-export type VoidAction = {
-  readonly type: ActionConstant;
-};
-
-export type ActionSuccess<Payload> = {
-  readonly type: ActionConstant;
-  readonly error?: false; // Purely for type inference.
-  readonly payload: Payload;
-};
-
-// Failed actions carry an arbitrary payload and always have
-export type ActionFailure<Payload> = {
-  readonly type: ActionConstant;
-  readonly error: true;
-  readonly payload: Payload;
-};

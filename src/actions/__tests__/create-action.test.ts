@@ -2,6 +2,11 @@ import createAction from '../create-action';
 import { failure } from '../failure';
 import { expectType, expectNotType } from '../../types/assertions';
 import Phase from '../../phase-constants';
+import { OptimisticAction, ActionSuccess } from '../../types/actions';
+import {
+  isActionSuccess,
+  isOptimisticAction,
+} from '../../utils/action-variant';
 
 describe('createAction', () => {
   it('returns an action creator', () => {
@@ -151,6 +156,23 @@ describe('createAction', () => {
         done: true,
         value: resolveValue,
       });
+    });
+
+    it('infers the action types', async () => {
+      const later = createAction.async('later', async () => 'value');
+      const iterator = later();
+      const next = await iterator.next();
+
+      if (next.done === false) {
+        const action = next.value;
+        if (isOptimisticAction(action)) {
+          expectType<OptimisticAction<void>>(action);
+        }
+
+        if (isActionSuccess(action)) {
+          expectType<ActionSuccess<string>>(action);
+        }
+      }
     });
   });
 });
