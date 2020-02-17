@@ -117,23 +117,27 @@ type ReduxAction<ActionCreator> = ActionCreator extends (
   ? Payload
   : never;
 
-type SuccessPayload<ActionCreator extends (...args: any) => {}> = ReduxAction<
-  ActionCreator
-> extends ActionFailure<any> | ActionSuccess<infer Payload>
+export type SuccessPayload<
+  ActionCreator extends (...args: any) => {}
+> = ReduxAction<ActionCreator> extends
+  | ActionFailure<any>
+  | ActionSuccess<infer Payload>
   ? Payload
   : ReduxAction<ActionCreator> extends ActionSuccess<infer Payload>
   ? Payload
   : never;
 
-type FailurePayload<ActionCreator extends (...args: any) => {}> = ReduxAction<
-  ActionCreator
-> extends ActionSuccess<any> | ActionFailure<infer Failure>
+export type FailurePayload<
+  ActionCreator extends (...args: any) => {}
+> = ReduxAction<ActionCreator> extends
+  | ActionSuccess<any>
+  | ActionFailure<infer Failure>
   ? Failure
   : ReduxAction<ActionCreator> extends ActionFailure<infer Failure>
   ? Failure
   : never;
 
-type OptimisticPayload<
+export type OptimisticPayload<
   ActionCreator extends (...args: any) => AsyncGenerator<any>
 > = ActionCreator extends (...args: any) => AsyncGenerator<infer Action>
   ? Action extends OptimisticAction<infer Payload> | ActionSuccess<any>

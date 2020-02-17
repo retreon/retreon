@@ -4,7 +4,7 @@ import handleAction from './handle-action';
 import mapActionsToReducers from './map-actions-to-reducers';
 import callOnce from '../utils/call-once';
 import assert from '../utils/assert';
-import { isActionFailure } from '../utils/action-variant';
+import { isActionFailure, isOptimisticAction } from '../utils/action-variant';
 
 function createReducer<State>(initialState: State, reducerFactory: Function) {
   assert(
@@ -34,6 +34,8 @@ function createReducer<State>(initialState: State, reducerFactory: Function) {
 
     const reducersForActionType = isActionFailure(action)
       ? handlers.error
+      : isOptimisticAction(action)
+      ? handlers.optimistic
       : handlers.success;
 
     return reducersForActionType.reduce(

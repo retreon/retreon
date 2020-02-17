@@ -51,4 +51,20 @@ handleAction.error = <
   };
 };
 
+handleAction.optimistic = <
+  ActionCreator extends ActionTypeCoercible,
+  Reducer extends (...args: any) => any
+>(
+  actionCreator: ActionCreator,
+  reducer: Reducer,
+): ReducerDefinition => {
+  assertValidArguments(actionCreator, reducer);
+
+  return {
+    actionType: getActionType(actionCreator),
+    reducerType: ReducerType.Optimistic,
+    reducer,
+  };
+};
+
 export default handleAction;

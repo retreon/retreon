@@ -35,4 +35,15 @@ describe('handleAction', () => {
       });
     });
   });
+
+  describe('.optimistic(...)', () => {
+    it('returns an action definition', () => {
+      const action = createAction.async('later', async () => {});
+      const def = handleAction.optimistic(action, () => {});
+
+      expect(def).toMatchObject({
+        actionType: 'later',
+      });
+    });
+  });
 });

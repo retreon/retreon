@@ -40,6 +40,8 @@ describe('mapActionsToReducers', () => {
 
     expect(map.get(getActionType(increment))).toMatchObject({
       success: [expect.any(Function), expect.any(Function)],
+      error: [],
+      optimistic: [],
     });
   });
 
@@ -51,6 +53,21 @@ describe('mapActionsToReducers', () => {
     expect(map.get(getActionType(increment))).toMatchObject({
       success: [],
       error: [expect.any(Function)],
+      optimistic: [],
+    });
+  });
+
+  it('adds optimistic handlers to the correct list', () => {
+    const handler = jest.fn();
+
+    const map = mapActionsToReducers([
+      handleAction.optimistic(increment, handler),
+    ]);
+
+    expect(map.get(getActionType(increment))).toMatchObject({
+      success: [],
+      error: [],
+      optimistic: [expect.any(Function)],
     });
   });
 });

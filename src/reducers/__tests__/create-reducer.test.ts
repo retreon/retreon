@@ -2,6 +2,7 @@ import { nothing } from 'immer';
 
 import { createReducer, createAction, failure } from '../../index';
 import { expectType } from '../../types/assertions';
+import forgeAction from '../../utils/forge-action';
 
 describe('createReducer', () => {
   it('returns a reducer', () => {
@@ -167,6 +168,22 @@ describe('createReducer', () => {
           expectType<string>(error);
         }),
       ]);
+    });
+  });
+
+  describe('handleAction.optimistic', () => {
+    it('gets called for optimistic actions', () => {
+      const later = createAction.async('later', async () => {});
+      const handler = jest.fn();
+
+      const reducer = createReducer(0, handleAction => [
+        handleAction.optimistic(later, handler),
+      ]);
+
+      const action = forgeAction.optimistic(later, undefined);
+      reducer(undefined, action);
+
+      expect(handler).toHaveBeenCalledWith(0, undefined);
     });
   });
 });

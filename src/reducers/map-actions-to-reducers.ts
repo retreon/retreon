@@ -13,6 +13,7 @@ type ActionReducerMapping = Map<
   {
     success: Array<Fn>;
     error: Array<Fn>;
+    optimistic: Array<Fn>;
   }
 >;
 
@@ -26,6 +27,7 @@ export default function mapActionsToReducers(
       mapping.set(actionType, {
         success: [],
         error: [],
+        optimistic: [],
       });
     }
 
@@ -37,6 +39,8 @@ export default function mapActionsToReducers(
       handlers.success.push(immutableReducer);
     } else if (reducerType === ReducerType.Error) {
       handlers.error.push(immutableReducer);
+    } else if (reducerType === ReducerType.Optimistic) {
+      handlers.optimistic.push(immutableReducer);
     }
   });
 
