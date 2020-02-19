@@ -1,13 +1,16 @@
 import { createAction } from '../../index';
-import { Task } from './reducer';
+import { Task, TaskView } from './reducer';
 
-export const addTask = createAction<Task>('tasks/add');
-export const removeTask = createAction<Task['id']>('task/remove');
-export const moveTask = createAction<{
-  origin: Task['id'];
-  destination: number;
-}>('tasks/move');
+export const create = createAction<Task>('tasks/create');
+export const remove = createAction<Task['id']>('tasks/remove');
+export const move = createAction<{ origin: number; target: number }>(
+  'tasks/move',
+);
 
-export const finishTask = createAction<Task['id']>('tasks/finishTask');
-export const unfinishTask = createAction<Task['id']>('tasks/unfinishTask');
+export const markComplete = createAction<Task['id']>('tasks/mark-complete');
+export const markIncomplete = createAction<Task['id']>('tasks/mark-incomplete');
+
 export const clearCompleted = createAction('tasks/clear-completed');
+export const clearAll = createAction('tasks/clear-all');
+
+export const changeView = createAction<TaskView>('tasks/change-view');

@@ -1,8 +1,9 @@
 import { createReducer } from '../../index';
-import * as actions from './actions';
+import * as tasks from './actions';
 
 type State = {
   tasks: Array<Task>;
+  view: TaskView;
 };
 
 export type Task = {
@@ -11,35 +12,50 @@ export type Task = {
   completed: boolean;
 };
 
+export enum TaskView {
+  All = 'all',
+  Complete = 'complete',
+  Incomplete = 'incomplete',
+}
+
 export const initialState: State = {
+  view: TaskView.All,
   tasks: [],
 };
 
 export default createReducer(initialState, handleAction => [
-  handleAction(actions.addTask, (state, task) => {
+  handleAction(tasks.create, (state, task) => {
     state.tasks.push(task);
   }),
 
-  handleAction(actions.moveTask, (state, { origin, destination }) => {
+  handleAction(tasks.move, (state, { origin, target }) => {
     const [task] = state.tasks.splice(origin, 1);
-    state.tasks.splice(destination, 0, task);
+    state.tasks.splice(target, 0, task);
   }),
 
-  handleAction(actions.finishTask, (state, taskId) => {
+  handleAction(tasks.markComplete, (state, taskId) => {
     const task = state.tasks.find(task => task.id === taskId);
     if (task) task.completed = true;
   }),
 
-  handleAction(actions.unfinishTask, (state, taskId) => {
+  handleAction(tasks.markIncomplete, (state, taskId) => {
     const task = state.tasks.find(task => task.id === taskId);
     if (task) task.completed = false;
   }),
 
-  handleAction(actions.removeTask, (state, taskId) => {
+  handleAction(tasks.remove, (state, taskId) => {
     state.tasks = state.tasks.filter(task => task.id !== taskId);
   }),
 
-  handleAction(actions.clearCompleted, state => {
+  handleAction(tasks.clearCompleted, state => {
     state.tasks = state.tasks.filter(task => !task.completed);
+  }),
+
+  handleAction(tasks.clearAll, () => {
+    return initialState;
+  }),
+
+  handleAction(tasks.changeView, (state, filter) => {
+    state.view = filter;
   }),
 ]);
