@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware } from 'redux';
 
 import middleware from '../async-generator-middleware';
+import { expectType } from '../../types/assertions';
 
 describe('Redux middleware', () => {
   const setup = () => {
@@ -42,5 +43,20 @@ describe('Redux middleware', () => {
     const fail = () => store.dispatch(action() as any);
     expect(fail).toThrow(/plain objects/i);
     expect(reducer).toHaveBeenCalledTimes(1);
+  });
+
+  it('resolves with the iterator return value', async () => {
+    const { store } = setup();
+    const resolveValue = 10;
+
+    async function* action() {
+      yield { type: 'first' };
+      return resolveValue;
+    }
+
+    const result = await store.dispatch(action());
+
+    expectType<number>(result);
+    expect(result).toBe(resolveValue);
   });
 });

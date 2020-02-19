@@ -1,5 +1,5 @@
 /* eslint-disable no-constant-condition */
-import { Middleware, AnyAction } from 'redux';
+import { Middleware } from 'redux';
 
 /**
  * A redux middleware which adds support for async actions and action
@@ -67,7 +67,7 @@ type IteratorReturnType<
 
 // Overload `store.dispatch(...)` to add support for async iterators.
 declare module 'redux' {
-  interface Dispatch<A extends Action = AnyAction> {
+  interface Dispatch<A extends Action> {
     <Iterator extends AsyncIterator<any>>(action: Iterator): Promise<
       IteratorReturnType<Iterator>
     >;
