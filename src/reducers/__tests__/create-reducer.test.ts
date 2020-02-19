@@ -185,5 +185,21 @@ describe('createReducer', () => {
 
       expect(handler).toHaveBeenCalledWith(0, undefined);
     });
+
+    it('passes the payload', () => {
+      const later = createAction.async('yolo', async (n: number) => String(n));
+      const reducer = createReducer(0, handleAction => [
+        handleAction.optimistic(later, (state, value) => {
+          expectType<number>(state);
+          expectType<number>(value);
+          return value;
+        }),
+      ]);
+
+      const action = forgeAction.optimistic(later, 10);
+      const state = reducer(undefined, action);
+
+      expect(state).toBe(10);
+    });
   });
 });

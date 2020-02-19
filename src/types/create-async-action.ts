@@ -20,22 +20,23 @@ export interface CreateAsyncAction {
   async<Effect extends AsyncFunction>(
     type: ActionConstant,
     effect: Effect,
-  ): CoercibleAction<[], ActionGenerator<Effect>>;
+  ): Effect extends () => Promise<infer TReturn>
+    ? CoercibleAction<[], ActionSequence<void, TReturn>>
+    : never;
+
+  async<Effect extends AnyAsyncFunction>(
+    type: ActionConstant,
+    effect: Effect,
+  ): Effect extends (input: infer Input, ...args: any) => Promise<infer TReturn>
+    ? CoercibleAction<[Input], ActionSequence<Input, TReturn>>
+    : never;
 }
 
 type AsyncFunction = () => Promise<any>;
 type AnyAsyncFunction = (...args: any) => Promise<any>;
 
-type ActionGenerator<Effect extends AnyAsyncFunction> = ActionSequence<
-  ResolveType<ReturnType<Effect>>
->;
-
-type ActionSequence<TReturn> = AsyncGenerator<
-  OptimisticAction<void> | ActionSuccess<TReturn>,
+type ActionSequence<Optimistic, TReturn> = AsyncGenerator<
+  OptimisticAction<Optimistic> | ActionSuccess<TReturn>,
   TReturn,
   void
 >;
-
-type ResolveType<P extends Promise<any>> = P extends Promise<infer Resolve>
-  ? Resolve
-  : never;

@@ -180,5 +180,22 @@ describe('createAction', () => {
         }
       }
     });
+
+    it('infers the optimistic action type from the effect parameter', async () => {
+      const later = createAction.async('later', async (t: string) => Number(t));
+      const iterator = later('200');
+      const next = await iterator.next();
+
+      if (next.done === false) {
+        const action = next.value;
+        if (isOptimisticAction(action)) {
+          expectType<OptimisticAction<string>>(action);
+        }
+
+        if (isActionSuccess(action)) {
+          expectType<ActionSuccess<number>>(action);
+        }
+      }
+    });
   });
 });

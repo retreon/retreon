@@ -92,7 +92,7 @@ interface HandleAction<State> {
    * })
    */
   optimistic<
-    ActionCreator extends (...args: any) => AsyncGenerator,
+    ActionCreator extends (...args: any) => AsyncGenerator<any, any>,
     Reducer extends (
       state: Draft<State>,
       action: OptimisticPayload<ActionCreator>,
@@ -139,8 +139,8 @@ export type FailurePayload<
 
 export type OptimisticPayload<
   ActionCreator extends (...args: any) => AsyncGenerator<any>
-> = ActionCreator extends (...args: any) => AsyncGenerator<infer Action>
-  ? Action extends OptimisticAction<infer Payload> | ActionSuccess<any>
-    ? Payload
-    : never
+> = ActionCreator extends (
+  ...args: any
+) => AsyncGenerator<OptimisticAction<infer Payload>>
+  ? Payload
   : never;
