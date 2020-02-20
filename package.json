@@ -1,12 +1,11 @@
 {
   "name": "retreon",
   "version": "0.1.0",
-  "description": "A toolkit that makes redux delightful",
+  "description": "A delightful, type-safe redux toolkit",
   "main": "dist/index.js",
-  "repository": "github.com/PsychoLlama/retreon",
+  "repository": "https://github.com/PsychoLlama/retreon",
   "author": "Jesse Gibson <JesseTheGibson@gmail.com>",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "prepare": "tsc",
     "lint": "eslint src --ext .js,.ts",
@@ -31,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-prettier": "^3.1.1",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
@@ -41,7 +41,6 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "eslint-config-prettier": "^6.7.0",
     "immer": "^5.3.6"
   }
 }
