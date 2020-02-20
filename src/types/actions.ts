@@ -1,6 +1,13 @@
 import Phase from '../constants/phase';
 
-export type ActionConstant = string | symbol;
+/**
+ * Technically action types can be anything except `undefined`, but in
+ * practice, symbols and strings are the only players. The redux documentation
+ * suggests using strings because they're serializable. Retreon takes
+ * a stronger stance: action.type must be a string.
+ */
+export type ActionConstant = string;
+
 export type Action<Payload> =
   | ActionSuccess<Payload>
   | ActionFailure<Payload>
@@ -8,7 +15,6 @@ export type Action<Payload> =
   | VoidAction;
 
 export interface ActionTypeCoercible {
-  [Symbol.toPrimitive](hint: string): ActionConstant;
   toString(): ActionConstant;
 }
 

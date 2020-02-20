@@ -4,9 +4,10 @@ export default function bindActionType<Fn extends Function>(
   actionType: ActionConstant,
   fn: Fn,
 ) {
-  Object.assign(fn, {
-    [Symbol.toPrimitive]: () => actionType,
-    toString: () => actionType,
+  Object.defineProperty(fn, 'toString', {
+    value: () => actionType,
+    configurable: false,
+    writable: false,
   });
 
   return fn;

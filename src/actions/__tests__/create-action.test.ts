@@ -26,6 +26,12 @@ describe('createAction', () => {
     expect(String(increment)).toBe('increment');
   });
 
+  it('goes kaboom if the action type is not a string', () => {
+    const fail = () => createAction(Symbol('not allowed') as any);
+
+    expect(fail).toThrow(/action.type/i);
+  });
+
   it('returns an error type if given a failure', () => {
     const doTheThing = createAction('effect', () => failure('nope'));
 
@@ -134,7 +140,12 @@ describe('createAction', () => {
       const later = createAction.async(actionType, async () => {});
 
       expect(String(later)).toEqual(actionType);
-      expect(later[Symbol.toPrimitive]('default')).toBe(actionType);
+    });
+
+    it('dies if the action type is not a string', () => {
+      const fail = () => createAction.async(Symbol() as any, async () => {});
+
+      expect(fail).toThrow(/action.type/i);
     });
 
     it('dispatches actions when created and after finishing', async () => {

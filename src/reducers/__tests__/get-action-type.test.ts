@@ -13,12 +13,6 @@ describe('getActionType', () => {
     expect(getActionType('input')).toBe('input');
   });
 
-  it('returns the input if given a symbol', () => {
-    const id = Symbol('fake action type');
-
-    expect(getActionType(id)).toBe(id);
-  });
-
   // redux-actions only implements `toString()`.
   it('survives if the action creator only implements string coercion', () => {
     const action = () => {};

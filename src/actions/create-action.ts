@@ -3,6 +3,7 @@ import { CreateAction } from '../types/create-action';
 import { isFailure, getValue } from './failure';
 import createAsyncAction from './create-async-action';
 import bindActionType from './bind-action-type';
+import validateActionType from './validate-action-type';
 
 // Synchronous action creator.
 //
@@ -11,6 +12,8 @@ import bindActionType from './bind-action-type';
 //   return { url: URL.createObjectURL(file) }
 // })
 const createAction = (actionType: ActionConstant, effect?: Function) => {
+  validateActionType(actionType);
+
   const executeEffectAndReturnAction = (input: any) => {
     if (effect === undefined) {
       if (input === undefined) {
