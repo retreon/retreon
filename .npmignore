@@ -1,1 +1,9 @@
-src/examples
+__tests__
+src/examples/
+src/types/
+jest.config.js
+run-tests
+tsconfig.json
+.travis.yml
+.prettierrc.yml
+.eslintrc.yml
