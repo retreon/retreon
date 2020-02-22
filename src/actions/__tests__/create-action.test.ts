@@ -208,5 +208,15 @@ describe('createAction', () => {
         }
       }
     });
+
+    it('passes the parameter through', async () => {
+      const later = createAction.async('later', async (t: string) => t);
+      const iterator = later('hello');
+      await iterator.next();
+
+      await expect(iterator.next()).resolves.toMatchObject({
+        value: { payload: 'hello' },
+      });
+    });
   });
 });

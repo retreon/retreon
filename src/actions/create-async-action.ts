@@ -9,13 +9,15 @@ export default function createAsyncAction<
 >(actionType: ActionConstant, effect: Effect) {
   validateActionType(actionType);
 
-  async function* createAsyncAction(): AsyncGenerator<any, TReturn> {
+  async function* createAsyncAction(
+    input: Parameters<Effect>[0],
+  ): AsyncGenerator<any, TReturn> {
     yield {
       type: actionType,
       meta: { phase: Phase.Optimistic },
     };
 
-    const payload = await effect();
+    const payload = await effect(input);
 
     yield {
       type: actionType,
