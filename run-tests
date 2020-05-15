@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-yarn lint || fail=1
-yarn test || fail=1
+yarn test:lint || fail=1
+yarn test:unit || fail=1
 
 if [[ -n "$fail" ]]; then
   exit 1
