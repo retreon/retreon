@@ -2,7 +2,7 @@
   <h1>retreon</h1>
   <p>A delightful, type-safe redux toolkit.</p>
 
-  <a href="https://travis-ci.org/PsychoLlama/retreon/branches"><img alt="Build status" src="https://img.shields.io/travis/PsychoLlama/retreon/master?label=Travis%20CI" /></a>
+  <a href="https://github.com/PsychoLlama/retreon/actions?query=workflow%3A%22Continuous+Integration%22"><img alt="Build status" src="https://img.shields.io/github/workflow/status/PsychoLlama/retreon/Continuous Integration/master" /></a>
   <a href="https://www.npmjs.com/package/retreon/"><img alt="npm" src="https://img.shields.io/npm/v/retreon" /></a>
   <a href="https://bundlephobia.com/result?p=retreon"><img alt="npm bundle size" src="https://img.shields.io/bundlephobia/minzip/retreon?color=teal" /></a>
 </div>
