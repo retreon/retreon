@@ -8,8 +8,8 @@
   "license": "MIT",
   "scripts": {
     "prepare": "tsc",
-    "lint": "eslint src --ext .js,.ts",
-    "test": "jest"
+    "lint": "eslint src --ext .js,.ts --color",
+    "test": "jest --color"
   },
   "husky": {
     "hooks": {
