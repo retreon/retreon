@@ -5,7 +5,7 @@ import { Middleware } from 'redux';
  * A redux middleware which adds support for async actions and action
  * sequences.
  */
-const reduxMiddleware: Middleware = ({ dispatch }) => next => <
+const reduxMiddleware: Middleware = ({ dispatch }) => (next) => <
   PossiblyAnything extends DispatchCompatible<typeof dispatch>,
   YieldedAction extends DispatchCompatible<typeof dispatch>
 >(

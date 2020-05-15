@@ -21,7 +21,7 @@ export const initialState: State = {
 };
 
 // TODO: Fix payload type inference.
-export default createReducer(initialState, handleAction => [
+export default createReducer(initialState, (handleAction) => [
   handleAction.optimistic(news.loadPage, (state, page) => {
     state.loading = true;
     state.currentPage = page;
@@ -33,7 +33,7 @@ export default createReducer(initialState, handleAction => [
   }),
 
   handleAction.optimistic(news.upvote, (state, { id }) => {
-    const result = state.results.find(result => result.id === id);
+    const result = state.results.find((result) => result.id === id);
     if (result) result.upvotes++;
   }),
 ]);

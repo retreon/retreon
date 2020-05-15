@@ -23,7 +23,7 @@ export const initialState: State = {
   tasks: [],
 };
 
-export default createReducer(initialState, handleAction => [
+export default createReducer(initialState, (handleAction) => [
   handleAction(tasks.create, (state, task) => {
     state.tasks.push(task);
   }),
@@ -34,21 +34,21 @@ export default createReducer(initialState, handleAction => [
   }),
 
   handleAction(tasks.markComplete, (state, taskId) => {
-    const task = state.tasks.find(task => task.id === taskId);
+    const task = state.tasks.find((task) => task.id === taskId);
     if (task) task.completed = true;
   }),
 
   handleAction(tasks.markIncomplete, (state, taskId) => {
-    const task = state.tasks.find(task => task.id === taskId);
+    const task = state.tasks.find((task) => task.id === taskId);
     if (task) task.completed = false;
   }),
 
   handleAction(tasks.remove, (state, taskId) => {
-    state.tasks = state.tasks.filter(task => task.id !== taskId);
+    state.tasks = state.tasks.filter((task) => task.id !== taskId);
   }),
 
-  handleAction(tasks.clearCompleted, state => {
-    state.tasks = state.tasks.filter(task => !task.completed);
+  handleAction(tasks.clearCompleted, (state) => {
+    state.tasks = state.tasks.filter((task) => !task.completed);
   }),
 
   handleAction(tasks.clearAll, () => {

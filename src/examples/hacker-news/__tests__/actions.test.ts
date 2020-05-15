@@ -8,7 +8,7 @@ jest.mock('../http');
 
 describe('News actions', () => {
   const dispatch = <T extends AsyncIterator<any>>(iterator: T) => {
-    const store = createStore(t => t, applyMiddleware(middleware));
+    const store = createStore((t) => t, applyMiddleware(middleware));
     return store.dispatch(iterator);
   };
 

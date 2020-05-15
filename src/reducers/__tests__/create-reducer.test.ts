@@ -50,7 +50,7 @@ describe('createReducer', () => {
       const increment = createAction('increment', () => 'yo');
       const actionReducer = jest.fn();
 
-      const reducer = createReducer(0, handleAction => [
+      const reducer = createReducer(0, (handleAction) => [
         handleAction(increment, actionReducer),
       ]);
 
@@ -68,7 +68,7 @@ describe('createReducer', () => {
       const onSuccess = jest.fn();
       const onFailure = jest.fn();
 
-      const reducer = createReducer(0, handleAction => [
+      const reducer = createReducer(0, (handleAction) => [
         handleAction(unstable, onSuccess),
         handleAction.error(unstable, onFailure),
       ]);
@@ -83,12 +83,12 @@ describe('createReducer', () => {
       const increment = createAction('increment');
 
       const initialState = { count: 0 };
-      const reducer = createReducer(initialState, handleAction => [
-        handleAction(increment, state => {
+      const reducer = createReducer(initialState, (handleAction) => [
+        handleAction(increment, (state) => {
           state.count += 1;
         }),
 
-        handleAction(increment, state => {
+        handleAction(increment, (state) => {
           state.count += 1;
         }),
       ]);
@@ -104,7 +104,7 @@ describe('createReducer', () => {
       const initialState = 0;
       const reset = createAction('reset');
 
-      const reducer = createReducer(initialState, handleAction => [
+      const reducer = createReducer(initialState, (handleAction) => [
         handleAction(reset, () => initialState),
       ]);
 
@@ -117,7 +117,7 @@ describe('createReducer', () => {
       const reset = createAction('reset');
       const initialState: void | number = 0;
 
-      const reducer = createReducer(initialState, handleAction => [
+      const reducer = createReducer(initialState, (handleAction) => [
         handleAction(reset, () => nothing),
       ]);
 
@@ -129,7 +129,7 @@ describe('createReducer', () => {
     it('infers state and payload types', () => {
       const add = createAction('add', (value: string) => value);
 
-      createReducer(0, handleAction => [
+      createReducer(0, (handleAction) => [
         handleAction(add, (state, value) => {
           expectType<number>(state);
           expectType<string>(value);
@@ -148,7 +148,7 @@ describe('createReducer', () => {
       const onSuccess = jest.fn();
       const onFailure = jest.fn();
 
-      const reducer = createReducer(0, handleAction => [
+      const reducer = createReducer(0, (handleAction) => [
         handleAction(unstable, onSuccess),
         handleAction.error(unstable, onFailure),
       ]);
@@ -162,7 +162,7 @@ describe('createReducer', () => {
     it('infers error types', () => {
       const die = createAction('type', () => failure('content'));
 
-      createReducer(0, handleAction => [
+      createReducer(0, (handleAction) => [
         handleAction(die, (state, error) => {
           expectType<number>(state);
           expectType<string>(error);
@@ -176,7 +176,7 @@ describe('createReducer', () => {
       const later = createAction.async('later', async () => {});
       const handler = jest.fn();
 
-      const reducer = createReducer(0, handleAction => [
+      const reducer = createReducer(0, (handleAction) => [
         handleAction.optimistic(later, handler),
       ]);
 
@@ -188,7 +188,7 @@ describe('createReducer', () => {
 
     it('passes the payload', () => {
       const later = createAction.async('yolo', async (n: number) => String(n));
-      const reducer = createReducer(0, handleAction => [
+      const reducer = createReducer(0, (handleAction) => [
         handleAction.optimistic(later, (state, value) => {
           expectType<number>(state);
           expectType<number>(value);
