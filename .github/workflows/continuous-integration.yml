@@ -1,4 +1,4 @@
-name: Retreon CI
+name: Continuous Integration
 
 on:
   - push
