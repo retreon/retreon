@@ -6,7 +6,10 @@ import callOnce from '../utils/call-once';
 import assert from '../utils/assert';
 import { isActionFailure, isOptimisticAction } from '../utils/action-variant';
 
-function createReducer<State>(initialState: State, reducerFactory: Function) {
+function createReducer<State>(
+  initialState: State,
+  reducerFactory: (...args: any) => any,
+) {
   assert(
     typeof reducerFactory === 'function',
     'createReducer(...) expects a function.',

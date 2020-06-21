@@ -118,7 +118,7 @@ type ReduxAction<ActionCreator> = ActionCreator extends (
   : never;
 
 export type SuccessPayload<
-  ActionCreator extends (...args: any) => {}
+  ActionCreator extends (...args: any) => any
 > = ReduxAction<ActionCreator> extends
   | ActionFailure<any>
   | ActionSuccess<infer Payload>
@@ -128,7 +128,7 @@ export type SuccessPayload<
   : never;
 
 export type FailurePayload<
-  ActionCreator extends (...args: any) => {}
+  ActionCreator extends (...args: any) => any
 > = ReduxAction<ActionCreator> extends
   | ActionSuccess<any>
   | ActionFailure<infer Failure>

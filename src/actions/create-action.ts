@@ -11,7 +11,10 @@ import validateActionType from './validate-action-type';
 // createAction('add-file', file => {
 //   return { url: URL.createObjectURL(file) }
 // })
-const createAction = (actionType: ActionConstant, effect?: Function) => {
+const createAction = (
+  actionType: ActionConstant,
+  effect?: (...args: any) => any,
+) => {
   validateActionType(actionType);
 
   const executeEffectAndReturnAction = (input: any) => {

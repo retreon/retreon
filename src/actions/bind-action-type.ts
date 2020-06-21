@@ -1,6 +1,6 @@
 import { ActionConstant } from '../types/actions';
 
-export default function bindActionType<Fn extends Function>(
+export default function bindActionType<Fn extends (...args: any) => any>(
   actionType: ActionConstant,
   fn: Fn,
 ) {

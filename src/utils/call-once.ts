@@ -1,5 +1,5 @@
 // Kind of like `memoize(...)` except it doesn't check parameter equality.
-const callOnce = <Fn extends Function>(fn: Fn): Fn => {
+const callOnce = <Fn extends (...args: any) => any>(fn: Fn): Fn => {
   const cache = { primed: false, value: null };
 
   const cachingLayer = (...args: any) => {

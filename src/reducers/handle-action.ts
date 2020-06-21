@@ -6,7 +6,7 @@ import ReducerType from '../constants/reducer-type';
 
 const assertValidArguments = (
   actionCreator: ActionTypeCoercible,
-  reducer: Function,
+  reducer: (...args: any) => any,
 ) => {
   assert(
     actionCreator !== undefined,
