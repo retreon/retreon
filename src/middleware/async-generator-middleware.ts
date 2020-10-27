@@ -67,7 +67,7 @@ type IteratorReturnType<
 
 // Overload `store.dispatch(...)` to add support for async iterators.
 declare module 'redux' {
-  interface Dispatch<A extends Action> {
+  interface Dispatch {
     <Iterator extends AsyncIterator<any>>(action: Iterator): Promise<
       IteratorReturnType<Iterator>
     >;
