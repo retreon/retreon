@@ -3,6 +3,7 @@ import {
   ActionFailure,
   OptimisticAction,
   ActionTypeCoercible,
+  VoidAction,
 } from '../types/actions';
 import getActionType from '../reducers/get-action-type';
 import Phase from '../constants/phase';
@@ -15,17 +16,12 @@ const forgeAction = <
 >(
   actionCreator: ActionCreator,
   payload: T,
-): ActionSuccess<T> => {
-  const action = {
-    type: getActionType(actionCreator),
-    payload,
-  };
+): ActionSuccess<T> | VoidAction => {
+  const actionType = getActionType(actionCreator);
 
-  if (payload === undefined) {
-    delete action.payload;
-  }
-
-  return action;
+  return payload === undefined
+    ? { type: actionType }
+    : { type: actionType, payload };
 };
 
 forgeAction.error = <
