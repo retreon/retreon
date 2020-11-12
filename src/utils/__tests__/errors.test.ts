@@ -32,17 +32,16 @@ describe('Error utils', () => {
     it('automatically assigns an error name', () => {
       class CustomError extends mixin(Error) {}
 
-      expect(new CustomError('testing custom errors')).toMatchObject({
-        name: 'CustomError',
-      });
+      expect(new CustomError('testing custom errors')).toHaveProperty(
+        'name',
+        'CustomError',
+      );
     });
 
     it('defaults to the current error name when anonymous', () => {
       const error = new (class extends mixin(TypeError) {})();
 
-      expect(error).toMatchObject({
-        name: TypeError.name,
-      });
+      expect(error).toHaveProperty('name', TypeError.name);
     });
 
     it('uses the given name if explicitly provided', () => {
@@ -50,9 +49,10 @@ describe('Error utils', () => {
         name = 'NamedError';
       }
 
-      expect(new CustomError('testing named errors')).toMatchObject({
-        name: 'NamedError',
-      });
+      expect(new CustomError('testing named errors')).toHaveProperty(
+        'name',
+        'NamedError',
+      );
     });
   });
 });
