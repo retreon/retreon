@@ -54,5 +54,14 @@ describe('Error utils', () => {
         'NamedError',
       );
     });
+
+    it('does not set its own name when used as a plain wrapper', () => {
+      const CustomError = mixin(TypeError);
+
+      expect(new CustomError('testing named errors')).toHaveProperty(
+        'name',
+        'TypeError',
+      );
+    });
   });
 });

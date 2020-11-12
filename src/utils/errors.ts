@@ -20,23 +20,26 @@ export function mixin<T extends ErrorType>(this: unknown, ErrorClass: T): T {
   assert(this instanceof mixin === false, 'mixin(...) is not a class.');
   assert(typeof ErrorClass === 'function', 'Expected an error class.');
 
-  class RetreonError extends ErrorClass {
+  class RetreonErrorMixin extends ErrorClass {
     [KNOWN_ERROR_MARKER] = true;
 
     constructor(...args: any[]) {
       super(...args);
 
       // DX improvement: try to assign a meaningful name (it shows up in the
-      // error description).
-      Object.defineProperty(RetreonError.prototype, 'name', {
-        value: this.constructor.name || ErrorClass.name,
-        configurable: true,
-        writable: true,
-      });
+      // error description). If the mixin is used without a subclass, then
+      // don't override the name.
+      if (this.constructor.name !== 'RetreonErrorMixin') {
+        Object.defineProperty(RetreonErrorMixin.prototype, 'name', {
+          value: this.constructor.name || ErrorClass.name,
+          configurable: true,
+          writable: true,
+        });
+      }
     }
   }
 
-  return RetreonError;
+  return RetreonErrorMixin;
 }
 
 export function isKnownError(input: unknown): boolean {
