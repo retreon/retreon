@@ -92,7 +92,7 @@ createReducer(initialState, handleAction => [
   }),
 
   // The payload is whatever you passed to `failure(...)`.
-  handleAction.error(settings.save, (state, payload) => {
+  handleAction.error(settings.save, (state, error) => {
     // Only handles failure.
   }),
 ])

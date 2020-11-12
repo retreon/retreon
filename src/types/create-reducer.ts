@@ -72,10 +72,7 @@ interface HandleAction<State> {
    */
   error<
     ActionCreator extends (...args: any) => any,
-    Reducer extends (
-      state: Draft<State>,
-      action: FailurePayload<ActionCreator>,
-    ) => NextState<State>
+    Reducer extends (state: Draft<State>, error: unknown) => NextState<State>
   >(
     actionCreator: ActionCreator,
     reducer: Reducer,
@@ -125,16 +122,6 @@ export type SuccessPayload<
   ? Payload
   : ReduxAction<ActionCreator> extends ActionSuccess<infer Payload>
   ? Payload
-  : never;
-
-export type FailurePayload<
-  ActionCreator extends (...args: any) => any
-> = ReduxAction<ActionCreator> extends
-  | ActionSuccess<any>
-  | ActionFailure<infer Failure>
-  ? Failure
-  : ReduxAction<ActionCreator> extends ActionFailure<infer Failure>
-  ? Failure
   : never;
 
 export type OptimisticPayload<
