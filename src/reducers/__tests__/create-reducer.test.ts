@@ -1,10 +1,23 @@
 import { nothing } from 'immer';
+import { createStore, applyMiddleware } from 'redux';
 
 import { createReducer, createAction, failure } from '../../index';
 import { expectType } from '../../types/assertions';
 import forgeAction from '../../utils/forge-action';
+import generatorMiddleware from '../../middleware/async-generator-middleware';
+import { mixin } from '../../utils/errors';
 
 describe('createReducer', () => {
+  class KnownError extends mixin(Error) {}
+
+  const setup = <F extends (...args: any[]) => any, S>(
+    reducer: F,
+    state?: S,
+  ) => {
+    const middleware = applyMiddleware(generatorMiddleware);
+    return createStore(reducer, state, middleware);
+  };
+
   it('returns a reducer', () => {
     const reducer = createReducer(null, () => []);
 
@@ -54,26 +67,27 @@ describe('createReducer', () => {
         handleAction(increment, actionReducer),
       ]);
 
-      const action = increment();
-      reducer(undefined, action);
+      const store = setup(reducer);
+      const action = store.dispatch(increment());
+
       expect(actionReducer).toHaveBeenCalledWith(0, action.payload);
     });
 
     it('ignores action errors', () => {
-      const unstable = createAction('unstable', (fail: boolean) => {
-        if (fail) return failure('Testing failures');
-        return true;
+      const fail = createAction('fail', () => {
+        throw new KnownError('Testing failures');
       });
 
       const onSuccess = jest.fn();
       const onFailure = jest.fn();
 
       const reducer = createReducer(0, (handleAction) => [
-        handleAction(unstable, onSuccess),
-        handleAction.error(unstable, onFailure),
+        handleAction(fail, onSuccess),
+        handleAction.error(fail, onFailure),
       ]);
 
-      reducer(undefined, unstable(true));
+      const store = setup(reducer);
+      store.dispatch(fail());
 
       expect(onSuccess).not.toHaveBeenCalled();
       expect(onFailure).toHaveBeenCalled();
@@ -93,11 +107,12 @@ describe('createReducer', () => {
         }),
       ]);
 
-      const state = reducer(undefined, increment());
+      const store = setup(reducer);
+      store.dispatch(increment());
 
       // No mutation.
       expect(initialState).toEqual({ count: 0 });
-      expect(state).toEqual({ count: 2 });
+      expect(store.getState()).toEqual({ count: 2 });
     });
 
     it('replaces the value when something is returned', () => {
@@ -108,9 +123,10 @@ describe('createReducer', () => {
         handleAction(reset, () => initialState),
       ]);
 
-      const state = reducer(10, reset());
+      const store = setup(reducer, 10);
+      store.dispatch(reset());
 
-      expect(state).toBe(0);
+      expect(store.getState()).toBe(0);
     });
 
     it('wipes out the value when returning "nothing"', () => {
@@ -121,9 +137,10 @@ describe('createReducer', () => {
         handleAction(reset, () => nothing),
       ]);
 
-      const state = reducer(10, reset());
+      const store = setup(reducer, 10);
+      store.dispatch(reset());
 
-      expect(state).toBe(undefined);
+      expect(store.getState()).toBe(undefined);
     });
 
     it('infers state and payload types', () => {
@@ -140,20 +157,38 @@ describe('createReducer', () => {
 
   describe('handleAction.error', () => {
     it('is called for errors', () => {
-      const unstable = createAction('unstable', (fail: boolean) => {
-        if (fail) return failure('Testing failures');
-        return true;
+      const fail = createAction('fail', () => {
+        throw new KnownError('Testing failures');
       });
 
       const onSuccess = jest.fn();
       const onFailure = jest.fn();
 
       const reducer = createReducer(0, (handleAction) => [
-        handleAction(unstable, onSuccess),
-        handleAction.error(unstable, onFailure),
+        handleAction(fail, onSuccess),
+        handleAction.error(fail, onFailure),
       ]);
 
-      reducer(undefined, unstable(false));
+      const store = setup(reducer);
+      store.dispatch(fail());
+
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(onFailure).toHaveBeenCalled();
+    });
+
+    it('is not called for success conditions', () => {
+      const win = createAction('win', () => true);
+
+      const onSuccess = jest.fn();
+      const onFailure = jest.fn();
+
+      const reducer = createReducer(0, (handleAction) => [
+        handleAction(win, onSuccess),
+        handleAction.error(win, onFailure),
+      ]);
+
+      const store = setup(reducer);
+      store.dispatch(win());
 
       expect(onSuccess).toHaveBeenCalled();
       expect(onFailure).not.toHaveBeenCalled();

@@ -1,5 +1,4 @@
 import createAction from '../create-action';
-import { failure } from '../failure';
 import { expectType, expectNotType } from '../../types/assertions';
 import Phase from '../../constants/phase';
 import {
@@ -11,13 +10,17 @@ import {
   isActionSuccess,
   isOptimisticAction,
 } from '../../utils/action-variant';
+import { mixin } from '../../utils/errors';
 
 describe('createAction', () => {
   it('returns an action creator', () => {
     const doTheThing = createAction('the-thing', () => 'payload');
 
     expect(doTheThing).toEqual(expect.any(Function));
-    expect(doTheThing()).toEqual({ type: 'the-thing', payload: 'payload' });
+
+    expect(Array.from(doTheThing())).toEqual([
+      { type: 'the-thing', payload: 'payload' },
+    ]);
   });
 
   it('coerces to the action type', () => {
@@ -32,14 +35,51 @@ describe('createAction', () => {
     expect(fail).toThrow(/action.type/i);
   });
 
-  it('returns an error type if given a failure', () => {
-    const doTheThing = createAction('effect', () => failure('nope'));
+  it('yields an error type if the effect throws', () => {
+    class KnownError extends mixin(Error) {}
+    const error = new KnownError('testing known effect errors');
 
-    expect(doTheThing()).toEqual({
+    const doTheThing = createAction('effect', () => {
+      throw error;
+    });
+
+    expect(Array.from(doTheThing())).toEqual([
+      {
+        type: 'effect',
+        error: true,
+        payload: error,
+      },
+    ]);
+  });
+
+  it('returns the error type for recognized errors', () => {
+    class KnownError extends mixin(Error) {}
+    const error = new KnownError('testing known effect errors');
+
+    const doTheThing = createAction('effect', () => {
+      throw error;
+    });
+
+    const iterator = doTheThing();
+
+    // First yield is the action, last is the return value.
+    expect(iterator.next().value).toEqual(iterator.next().value);
+  });
+
+  it('re-throws unrecognized errors', () => {
+    const error = new Error('testing unknown effect errors');
+    const doTheThing = createAction('effect', () => {
+      throw error;
+    });
+
+    const iterator = doTheThing();
+    expect(iterator.next().value).toEqual({
       type: 'effect',
       error: true,
-      payload: 'nope',
+      payload: error,
     });
+
+    expect(() => iterator.next()).toThrow(error);
   });
 
   // Other parameters reserved for future use. Pass an object instead.
@@ -47,14 +87,14 @@ describe('createAction', () => {
     const effect = jest.fn();
     const increment = createAction('increment', effect);
 
-    (increment as any)(1, null);
+    Array.from((increment as any)(1, null));
 
     expect(effect).toHaveBeenCalledWith(1);
   });
 
   it('uses an undefined payload if no effect is provided', () => {
     const increment = createAction('increment');
-    const action = increment();
+    const [action] = Array.from(increment());
 
     expectType<VoidAction>(action);
     expect(action).toEqual({
@@ -65,7 +105,7 @@ describe('createAction', () => {
   it('uses the argument as payload when no effect was provided', () => {
     const increment = createAction<string>('action-type');
     const args: Parameters<typeof increment> = ['some content'];
-    const action = increment(...args);
+    const [action] = Array.from(increment(...args));
 
     expectType<string>(action.payload);
     expect(action.payload).toBe(args[0]);
@@ -74,32 +114,42 @@ describe('createAction', () => {
   describe('type', () => {
     it('infers that payloads are missing in void actions', () => {
       const increment = createAction('increment');
-      const action = increment();
+      const [action] = Array.from(increment());
 
       expectNotType<{ payload: any }, typeof action>(action);
     });
 
     it('infers the payload type returned from effects', () => {
       const simple = createAction('simple', () => 'content');
-      const action = simple();
+      const [action] = Array.from(simple());
 
-      expectType<string>(action.payload);
+      if (action.error === true) {
+        expectType<unknown>(action.payload);
+      } else {
+        expectType<string>(action.payload);
+      }
     });
 
     it('infers required argument types', () => {
       const requiredArg = createAction('type', (value: string) => value);
 
       const args: Parameters<typeof requiredArg> = ['hello world'];
-      const action = requiredArg(...args);
-      expectType<string>(action.payload);
+      const [action] = Array.from(requiredArg(...args));
+
+      if (action.error !== true) {
+        expectType<string>(action.payload);
+      }
     });
 
     it('only exposes one parameter from the effect', () => {
       const requiredArg = createAction('type', (_: string, n: number) => n);
 
       const args: Parameters<typeof requiredArg> = ['hello world'];
-      const action = requiredArg(...args);
-      expectType<number>(action.payload);
+      const [action] = Array.from(requiredArg(...args));
+
+      if (action.error !== true) {
+        expectType<number>(action.payload);
+      }
     });
   });
 
