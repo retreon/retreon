@@ -86,30 +86,6 @@ describe('createAction', () => {
       expectType<string>(action.payload);
     });
 
-    it('infers error types from effect return types', () => {
-      const fail = createAction('failure', () => failure(1337));
-      const action = fail();
-
-      expectType<number>(action.payload);
-      expectType<{ error: true }>(action);
-    });
-
-    it('infers union types for possible failures', () => {
-      const mixed = createAction('mixed-result', () => {
-        if (Math.random() >= 0.5) return failure(1);
-        return 'or a string';
-      });
-
-      const args: Parameters<typeof mixed> = [];
-      const action = mixed(...args);
-
-      if (action.error === true) {
-        expectType<number>(action.payload);
-      } else {
-        expectType<string>(action.payload);
-      }
-    });
-
     it('infers required argument types', () => {
       const requiredArg = createAction('type', (value: string) => value);
 
