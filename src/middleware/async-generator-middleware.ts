@@ -9,10 +9,20 @@ const reduxMiddleware: Middleware = ({ dispatch }) => (next) => <
   PossiblyAnything extends DispatchCompatible<typeof dispatch>,
   YieldedAction extends DispatchCompatible<typeof dispatch>
 >(
-  action: PossiblyAnything | AsyncIterator<YieldedAction>,
+  action:
+    | AsyncIterator<YieldedAction>
+    | Iterator<YieldedAction>
+    | PossiblyAnything,
 ) => {
-  if (isIterator(action) && supportsAsyncIteration(action)) {
-    return consumeAsyncIterator(dispatch, action);
+  if (isIterator(action)) {
+    if (supportsAsyncIteration(action)) {
+      return consumeAsyncIterator(dispatch, action);
+    }
+
+    // Yes, this is phrased oddly. TypeScript insisted.
+    if (!supportsAsyncIteration(action)) {
+      return consumeSyncIterator(dispatch, action);
+    }
   }
 
   return next(action);
@@ -31,11 +41,11 @@ const consumeAsyncIterator = async <
   ReturnType
 >(
   dispatch: Dispatch,
-  generator: AsyncIterator<Action, ReturnType>,
+  iterator: AsyncIterator<Action, ReturnType>,
 ): Promise<ReturnType> => {
   while (true) {
     // TODO: Decide what, if anything, should go into `.next(...)`.
-    const result: IteratorResult<Action, ReturnType> = await generator.next();
+    const result: IteratorResult<Action, ReturnType> = await iterator.next();
 
     // The iterator finished. Resolve with the return value.
     if (result.done) return result.value;
@@ -45,10 +55,27 @@ const consumeAsyncIterator = async <
   }
 };
 
+const consumeSyncIterator = <
+  Dispatch extends (...args: any) => any,
+  Action extends DispatchCompatible<Dispatch>,
+  ReturnType
+>(
+  dispatch: Dispatch,
+  iterator: Iterator<Action, ReturnType>,
+) => {
+  while (true) {
+    const result: IteratorResult<Action, ReturnType> = iterator.next();
+
+    if (result.done) return result.value;
+
+    dispatch(result.value);
+  }
+};
+
 const supportsAsyncIteration = <T>(
-  generator: AsyncIterator<T> | Iterator<T>,
-): generator is AsyncIterator<T> => {
-  return Symbol.asyncIterator in generator;
+  iterator: AsyncIterator<T> | Iterator<T>,
+): iterator is AsyncIterator<T> => {
+  return Symbol.asyncIterator in iterator;
 };
 
 const isIterator = <T>(value: any): value is AsyncIterator<T> | Iterator<T> => {
@@ -62,14 +89,24 @@ const isIterator = <T>(value: any): value is AsyncIterator<T> | Iterator<T> => {
 
 // Pull the return type out of an async iterator.
 type IteratorReturnType<
-  Iterator extends AsyncIterator<any, any, any>
-> = Iterator extends AsyncIterator<any, infer TReturn, any> ? TReturn : never;
+  Sequence extends Iterator<any, any, any> | AsyncIterator<any, any, any>
+> = Sequence extends Iterator<any, infer TReturn, any>
+  ? TReturn
+  : Sequence extends AsyncIterator<any, infer TReturn, any>
+  ? TReturn
+  : never;
 
-// Overload `store.dispatch(...)` to add support for async iterators.
+// Overload `store.dispatch(...)` to add support for iterators.
 declare module 'redux' {
   interface Dispatch {
-    <Iterator extends AsyncIterator<any>>(action: Iterator): Promise<
-      IteratorReturnType<Iterator>
+    // Synchronous action creators
+    <Sequence extends Iterator<any>>(action: Sequence): IteratorReturnType<
+      Sequence
+    >;
+
+    // Async action creators
+    <Sequence extends AsyncIterator<any>>(action: Sequence): Promise<
+      IteratorReturnType<Sequence>
     >;
   }
 }
