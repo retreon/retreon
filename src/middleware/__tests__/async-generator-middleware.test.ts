@@ -15,48 +15,64 @@ describe('Redux middleware', () => {
     };
   };
 
-  it('dispatches every yielded value', async () => {
-    const { store, reducer } = setup();
+  describe('async iterator', () => {
+    it('dispatches every yielded value', async () => {
+      const { store, reducer } = setup();
 
-    async function* action() {
-      yield { type: 'first' };
-      yield { type: 'second' };
-    }
+      async function* action() {
+        yield { type: 'first' };
+        yield { type: 'second' };
+      }
 
-    await store.dispatch(action());
+      await store.dispatch(action());
 
-    expect(reducer).toHaveBeenCalledTimes(3); // Includes the @init action.
-    expect(reducer).toHaveBeenCalledWith(undefined, { type: 'first' });
-    expect(reducer).toHaveBeenCalledWith(undefined, { type: 'second' });
+      expect(reducer).toHaveBeenCalledTimes(3); // Includes the @init action.
+      expect(reducer).toHaveBeenCalledWith(undefined, { type: 'first' });
+      expect(reducer).toHaveBeenCalledWith(undefined, { type: 'second' });
+    });
+
+    it('resolves with the iterator return value', async () => {
+      const { store } = setup();
+      const resolveValue = 10;
+
+      async function* action() {
+        yield { type: 'first' };
+        return resolveValue;
+      }
+
+      const result = await store.dispatch(action());
+
+      expectType<number>(result);
+      expect(result).toBe(resolveValue);
+    });
   });
 
-  // Actions should never be dispatched back-to-back. Handle the same action
-  // in different reducers instead.
-  it('ignores synchronous iterators', () => {
-    const { store, reducer } = setup();
+  describe('sync iterator', () => {
+    it('dispatches every yielded value', () => {
+      const { store, reducer } = setup();
 
-    function* action() {
-      yield { type: 'should-not-dispatch' };
-      return 'no';
-    }
+      function* action() {
+        yield { type: 'first' };
+        yield { type: 'second' };
+      }
 
-    const fail = () => store.dispatch(action() as any);
-    expect(fail).toThrow(/plain objects/i);
-    expect(reducer).toHaveBeenCalledTimes(1);
-  });
+      store.dispatch(action());
 
-  it('resolves with the iterator return value', async () => {
-    const { store } = setup();
-    const resolveValue = 10;
+      expect(reducer).toHaveBeenCalledTimes(3); // Includes the @init action.
+      expect(reducer).toHaveBeenCalledWith(undefined, { type: 'first' });
+      expect(reducer).toHaveBeenCalledWith(undefined, { type: 'second' });
+    });
 
-    async function* action() {
-      yield { type: 'first' };
-      return resolveValue;
-    }
+    it('returns the iterator return value from dispatch', () => {
+      const { store } = setup();
 
-    const result = await store.dispatch(action());
+      function* action() {
+        yield { type: 'action' };
+        return '9,000% APY';
+      }
 
-    expectType<number>(result);
-    expect(result).toBe(resolveValue);
+      const result = store.dispatch(action());
+      expect(result).toBe('9,000% APY');
+    });
   });
 });
