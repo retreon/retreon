@@ -6,6 +6,18 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 [semver](https://semver.org/).
 
 ## [UNRELEASED]
+Added:
+- Error handling for every error thrown in an action, not just `failure(...)`
+  return values.
+- Support for dispatching synchronous iterators. This is an advanced and
+  rarely useful feature.
+
+Removed:
+- Payload type inference in `handleAction.error(...)` (`throw` types aren't
+  statically analyzable).
+
+Changed:
+- All action creators return iterators now. This may break your tests.
 
 ## [0.2.0] - 2020-06-20
 Changed:
