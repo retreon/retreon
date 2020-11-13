@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 
-import middleware from '../async-generator-middleware';
+import middleware from '../generator-middleware';
 import { expectType } from '../../types/assertions';
 
 describe('Redux middleware', () => {

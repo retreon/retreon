@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from 'redux';
 import { createReducer, createAction } from '../../index';
 import { expectType } from '../../types/assertions';
 import forgeAction from '../../utils/forge-action';
-import generatorMiddleware from '../../middleware/async-generator-middleware';
+import generatorMiddleware from '../../middleware/generator-middleware';
 import { mixin } from '../../utils/errors';
 
 describe('createReducer', () => {
