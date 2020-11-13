@@ -202,6 +202,21 @@ describe('createAction', () => {
       });
     });
 
+    it('includes action input as the optimistic payload', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const later = createAction.async('later', async (_msg: string) => null);
+      const iterator = later('action input');
+
+      await expect(iterator.next()).resolves.toEqual({
+        done: false,
+        value: {
+          type: String(later),
+          payload: 'action input',
+          meta: { phase: Phase.Optimistic },
+        },
+      });
+    });
+
     it('infers the action types', async () => {
       const later = createAction.async('later', async () => 'value');
       const iterator = later();

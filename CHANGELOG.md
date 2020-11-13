@@ -23,6 +23,10 @@ Removed:
 Changed:
 - All action creators return iterators now. This may break your tests.
 
+Fixed:
+- Added payload to optimistic actions. This was accidentally omitted in the
+  original implementation.
+
 ## [0.2.0] - 2020-06-20
 Changed:
 - Upgraded immer from `^5.3.6` to `^7.0.3` (major changes listed below).

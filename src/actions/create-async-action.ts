@@ -12,10 +12,11 @@ export default function createAsyncAction<
   async function* createAsyncAction(
     input: Parameters<Effect>[0],
   ): AsyncGenerator<any, TReturn> {
-    yield {
-      type: actionType,
-      meta: { phase: Phase.Optimistic },
-    };
+    const optimistic = { phase: Phase.Optimistic };
+
+    yield input === undefined
+      ? { type: actionType, meta: optimistic }
+      : { type: actionType, payload: input, meta: optimistic };
 
     try {
       const payload = await effect(input);
