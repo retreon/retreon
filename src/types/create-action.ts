@@ -14,7 +14,7 @@ export interface CreateAction extends CreateAsyncAction {
    * Returns a function which generates actions of the given type.
    * @param type A unique name which describes the action.
    * @param effect Something to run when the action is invoked. Whatever it
-   * returns becomes the action payload. Return `failure(...)` to signal an error.
+   * returns becomes the action payload.
    * @example
    * createAction('settings/load-theme', () => {
    *   return localStorage.getItem('theme')

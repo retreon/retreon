@@ -1,4 +1,4 @@
-import { createAction, failure } from '../../index';
+import { createAction } from '../../index';
 import forgeAction from '../forge-action';
 import {
   isActionSuccess,
@@ -28,7 +28,7 @@ describe('forgeAction', () => {
 
   describe('.error(...)', () => {
     it('returns an error action', () => {
-      const creator = createAction('creator', () => failure(5));
+      const creator = createAction('creator');
       const action = forgeAction.error(creator, 10);
 
       expect(isActionFailure(action)).toBe(true);

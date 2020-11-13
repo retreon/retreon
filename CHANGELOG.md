@@ -15,6 +15,7 @@ Added:
 Removed:
 - Payload type inference in `handleAction.error(...)` (`throw` types aren't
   statically analyzable).
+- The `failure(...)` return type. Instead, throw an error.
 
 Changed:
 - All action creators return iterators now. This may break your tests.
