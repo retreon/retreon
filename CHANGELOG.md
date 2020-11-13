@@ -9,6 +9,7 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 Added:
 - Error handling for every error thrown in an action, not just `failure(...)`
   return values.
+- Error dispatches for async action creators. Just use `throw`.
 - Support for dispatching synchronous iterators. This is an advanced and
   rarely useful feature.
 
