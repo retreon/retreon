@@ -8,6 +8,7 @@ import {
 } from '../../types/actions';
 import {
   isActionSuccess,
+  isActionFailure,
   isOptimisticAction,
 } from '../../utils/action-variant';
 import { mixin } from '../../utils/errors';
@@ -243,6 +244,23 @@ describe('createAction', () => {
       await expect(iterator.next()).resolves.toMatchObject({
         value: { payload: 'hello' },
       });
+    });
+
+    it('reports errors by dispatching them and re-throwing', async () => {
+      const error = new Error('Testing async errors');
+      const later = createAction.async('later', async () => {
+        throw error;
+      });
+
+      const iterator = later();
+
+      const { value: optimistic } = await iterator.next();
+      expect(isOptimisticAction(optimistic)).toBe(true);
+
+      const { value: failure } = await iterator.next();
+      expect(isActionFailure(failure)).toBe(true);
+
+      await expect(iterator.next()).rejects.toThrow(error);
     });
   });
 });

@@ -17,14 +17,25 @@ export default function createAsyncAction<
       meta: { phase: Phase.Optimistic },
     };
 
-    const payload = await effect(input);
+    try {
+      const payload = await effect(input);
 
-    yield {
-      type: actionType,
-      payload,
-    };
+      yield {
+        type: actionType,
+        payload,
+      };
 
-    return payload;
+      return payload;
+    } catch (error) {
+      yield {
+        type: actionType,
+        error: true,
+        payload: error,
+      };
+
+      // TODO: Determine how to treat known errors.
+      throw error;
+    }
   }
 
   return bindActionType(actionType, createAsyncAction);
