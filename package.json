@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "tsc",
-    "test": "./run-tests",
+    "test": "./bin/run-tests",
     "test:lint": "eslint src --ext .js,.ts --color",
     "test:unit": "jest --color"
   },
@@ -21,6 +21,14 @@
     "*.{js,ts}": [
       "eslint --fix"
     ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   },
   "peerDependencies": {
     "redux": "*"
