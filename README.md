@@ -63,26 +63,20 @@ const save = createAction('settings/save', (settings: Settings) => {
 ```
 
 ### Error handling
-If something goes wrong, retreon exposes a special function called
-`failure(...)`. Use that to mark the action failed.
+Retreon picks up any errors or rejections and emits them as redux actions.
+Simply throwing an error will signal the reducer.
 
-```js
-import { createAction, failure } from 'retreon'
-
-createAction('settings/save', (settings: Settings) => {
-  try {
-    localStorage.setItem('settings', JSON.stringify(settings))
-    return { success: 'yey' }
-  } catch {
-    return failure({ alternative: 'payload' })
+```ts
+const save = createAction('settings/save', (settings: Settings) => {
+  if (storagePolicy !== 'allowed') {
+    throw new Error('Unavailable For Legal Reasons.')
   }
+
+  localStorage.setItem('settings', JSON.stringify(settings))
 })
 ```
 
-Retreon will **not** swallow errors. You have to explicitly return
-`failure(...)` indicating the error is expected.
-
-To handle errors in your reducer, use `handleAction.error(...)`:
+Then, listen for errors using `handleAction.error(...)`:
 ```js
 import * as settings from '../actions/settings'
 
@@ -91,8 +85,7 @@ createReducer(initialState, handleAction => [
     // Only handles success.
   }),
 
-  // The payload is whatever you passed to `failure(...)`.
-  handleAction.error(settings.save, (state, payload) => {
+  handleAction.error(settings.save, (state, error) => {
     // Only handles failure.
   }),
 ])
@@ -125,9 +118,8 @@ const loadUser = createAction.async('users/load', async (id: string) => {
 })
 ```
 
-If it resolves, the action goes through `handleAction(...)`. If it fails,
-well, that hasn't been implemented yet. But it'll probably go through
-`handleAction.error(...)`. TODO.
+If it resolves, the action goes through `handleAction(...)`. Failures go
+through `handleAction.error(...)`.
 
 In addition, async action creators dispatch immediately so you can
 optimistically update state (like setting a `loading` flag or invalidating the
@@ -149,7 +141,7 @@ createReducer(initialState, handleAction => [
 And that concludes the API. Thank you for flying retreon airlines.
 
 ## Roadmap
-- [ ] Async error handling
+- [x] Async error handling
 - [ ] Improved documentation
 - [ ] More examples
 

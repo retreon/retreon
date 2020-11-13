@@ -1,5 +1,5 @@
 import handleAction from '../handle-action';
-import { createAction, failure } from '../../index';
+import { createAction } from '../../index';
 
 describe('handleAction', () => {
   const increment = createAction('increment', () => undefined);
@@ -25,7 +25,7 @@ describe('handleAction', () => {
   });
 
   describe('.error(...)', () => {
-    const die = createAction('die', () => failure('nope'));
+    const die = createAction('die');
 
     it('returns an action definition', () => {
       const def = handleAction.error(die, () => {});

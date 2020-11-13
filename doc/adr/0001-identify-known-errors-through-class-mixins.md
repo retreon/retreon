@@ -1,7 +1,7 @@
 # Identify Known Errors through Class Mixins
-- Status: proposed
+- Status: accepted
 - Deciders: @PsychoLlama
-- Date: 2020-11-11
+- Date: 2020-11-12
 
 ## Context and Problem Statement
 Retreon aims to provide robust error handling for all action creators, but

@@ -1,6 +1,7 @@
 __tests__
 src/examples/
 src/types/
+doc/adr/
 jest.config.js
 run-tests
 tsconfig.json

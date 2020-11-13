@@ -5,7 +5,6 @@ import {
   ActionFailure,
   VoidAction,
 } from './actions';
-import { Exception } from '../actions/failure';
 import { CreateAsyncAction } from './create-async-action';
 
 type AnyFunction = (...args: any) => any;
@@ -15,42 +14,38 @@ export interface CreateAction extends CreateAsyncAction {
    * Returns a function which generates actions of the given type.
    * @param type A unique name which describes the action.
    * @param effect Something to run when the action is invoked. Whatever it
-   * returns becomes the action payload. Return `failure(...)` to signal an error.
+   * returns becomes the action payload.
    * @example
    * createAction('settings/load-theme', () => {
    *   return localStorage.getItem('theme')
    * })
    */
-  (type: ActionConstant): CoercibleAction<[], VoidAction>;
+  (type: ActionConstant): CoercibleAction<[], ActionIterator<VoidAction>>;
 
   // No effect. Just pass a payload.
-  <T>(type: ActionConstant): CoercibleAction<[T], ActionSuccess<T>>;
+  <Payload>(type: ActionConstant): CoercibleAction<
+    [Payload],
+    ActionIterator<ActionSuccess<Payload>>
+  >;
 
   // No arguments.
   <Effect extends () => any>(
     type: ActionConstant,
     effect: Effect,
-  ): CoercibleAction<[], ActionForEffect<Effect>>;
+  ): CoercibleAction<[], ActionOutcomesForEffect<Effect>>;
 
   // At least one argument.
   <Effect extends (arg: any, ...args: any) => any>(
     type: ActionConstant,
     effect: Effect,
   ): Effect extends (arg: infer T, ...args: any) => any
-    ? CoercibleAction<[T], ActionForEffect<Effect>>
+    ? CoercibleAction<[T], ActionOutcomesForEffect<Effect>>
     : never;
 }
 
-type AnythingButException<Value> = Value extends Exception<any> ? never : Value;
+type ActionIterator<Action> = Generator<Action, Action>;
 
-// Turns the return value of an effect into an action object. This is the
-// most difficult type signature of `createAction(...)`. Avoid changing it.
-type ActionForEffect<Effect extends AnyFunction> = ReturnType<
-  Effect
-> extends Exception<infer Failure> // The action always fails.
-  ? ActionFailure<Failure>
-  : ReturnType<Effect> extends AnythingButException<ReturnType<Effect>> // The action never fails.
-  ? ActionSuccess<ReturnType<Effect>>
-  : ReturnType<Effect> extends Exception<infer Failure> | infer Payload // The action *might* fail.
-  ? ActionFailure<Failure> | ActionSuccess<Payload>
-  : never; // The action is drunk.
+// If an effect is provided, we have to assume it can fail.
+type ActionOutcomesForEffect<Effect extends AnyFunction> = ActionIterator<
+  ActionSuccess<ReturnType<Effect>> | ActionFailure<unknown>
+>;

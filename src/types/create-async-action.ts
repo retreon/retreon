@@ -3,6 +3,7 @@ import {
   CoercibleAction,
   OptimisticAction,
   ActionSuccess,
+  ActionFailure,
 } from './actions';
 
 export interface CreateAsyncAction {
@@ -36,7 +37,9 @@ type AsyncFunction = () => Promise<any>;
 type AnyAsyncFunction = (...args: any) => Promise<any>;
 
 type ActionSequence<Optimistic, TReturn> = AsyncGenerator<
-  OptimisticAction<Optimistic> | ActionSuccess<TReturn>,
+  | OptimisticAction<Optimistic>
+  | ActionSuccess<TReturn>
+  | ActionFailure<unknown>,
   TReturn,
   void
 >;
