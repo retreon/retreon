@@ -1,20 +1,29 @@
+import { createStore, applyMiddleware } from 'redux';
+
 import reducer from '../reducer';
 import * as counter from '../actions';
+import { middleware } from '../../../index';
 
 describe('Counter reducer', () => {
+  const setup = () => createStore(reducer, applyMiddleware(middleware));
+
   describe('increment(...)', () => {
     it('increments the count', () => {
-      const state = reducer(5, counter.increment());
+      const store = setup();
 
-      expect(state).toBe(6);
+      expect(store.getState()).toBe(0);
+      store.dispatch(counter.increment());
+      expect(store.getState()).toBe(1);
     });
   });
 
   describe('decrement(...)', () => {
     it('decrements the count', () => {
-      const state = reducer(5, counter.decrement());
+      const store = setup();
 
-      expect(state).toBe(4);
+      expect(store.getState()).toBe(0);
+      store.dispatch(counter.decrement());
+      expect(store.getState()).toBe(-1);
     });
   });
 });

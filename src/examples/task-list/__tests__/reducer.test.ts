@@ -1,10 +1,18 @@
+import { createStore, applyMiddleware } from 'redux';
+
 import reducer, { initialState, Task, TaskView } from '../reducer';
 import * as tasks from '../actions';
+import { middleware } from '../../../index';
 
 let id = 0;
 const uuid = () => id++;
 
 describe('task-list reducer', () => {
+  const setup = <State extends typeof initialState>(state?: State) => {
+    const enhancer = applyMiddleware(middleware);
+    return createStore(reducer, state, enhancer);
+  };
+
   const createTask = <T>(patch?: T): Task => ({
     id: uuid(),
     description: 'Write a real description',
@@ -14,11 +22,11 @@ describe('task-list reducer', () => {
 
   describe('create(...)', () => {
     it('appends a new task', () => {
+      const store = setup();
       const task = createTask({ description: 'brew more coffee' });
-      const action = tasks.create(task);
-      const state = reducer(undefined, action);
+      store.dispatch(tasks.create(task));
 
-      expect(state.tasks).toEqual([task]);
+      expect(store.getState()).toHaveProperty('tasks', [task]);
     });
   });
 
@@ -35,103 +43,104 @@ describe('task-list reducer', () => {
       };
 
       const [first, second, third, fourth] = startingPoint.tasks;
-      const action = tasks.move({ origin: 2, target: 1 });
-      const state = reducer(startingPoint, action);
+      const store = setup(startingPoint);
+      store.dispatch(tasks.move({ origin: 2, target: 1 }));
 
-      expect(state.tasks).toEqual([first, third, second, fourth]);
+      expect(store.getState()).toHaveProperty('tasks', [
+        first,
+        third,
+        second,
+        fourth,
+      ]);
     });
   });
 
   describe('markComplete(...)', () => {
     it('marks the task completed', () => {
-      const startingPoint = {
-        ...initialState,
-        tasks: [createTask({ description: 'save the pandas' })],
-      };
+      const task = createTask({ description: 'save the pandas' });
+      const store = setup({ ...initialState, tasks: [task] });
 
-      const [task] = startingPoint.tasks;
-      const action = tasks.markComplete(task.id);
-      const state = reducer(startingPoint, action);
+      store.dispatch(tasks.markComplete(task.id));
 
-      expect(state.tasks).toEqual([{ ...task, completed: true }]);
+      expect(store.getState()).toHaveProperty('tasks', [
+        { ...task, completed: true },
+      ]);
     });
   });
 
   describe('markIncomplete(...)', () => {
     it('reverts to the uncompleted state', () => {
-      const startingPoint = {
+      const task = createTask({ completed: true });
+      const store = setup({
         ...initialState,
-        tasks: [createTask({ completed: true })],
-      };
+        tasks: [task],
+      });
 
-      const [task] = startingPoint.tasks;
-      const action = tasks.markIncomplete(task.id);
-      const state = reducer(startingPoint, action);
+      store.dispatch(tasks.markIncomplete(task.id));
 
-      expect(state.tasks).toEqual([{ ...task, completed: false }]);
+      expect(store.getState()).toHaveProperty('tasks', [
+        { ...task, completed: false },
+      ]);
     });
   });
 
   describe('remove(...)', () => {
     it('removes the task', () => {
-      const startingPoint = {
+      const [first, second, third] = [
+        createTask({ description: 'recommend rust to more strangers' }),
+        createTask({ description: 'start 3 new projects' }),
+        createTask({ description: 'abandon those 3 new projects' }),
+      ];
+
+      const store = setup({
         ...initialState,
-        tasks: [
-          createTask({ description: 'recommend rust to more strangers' }),
-          createTask({ description: 'start 3 new projects' }),
-          createTask({ description: 'abandon those 3 new projects' }),
-        ],
-      };
+        tasks: [first, second, third],
+      });
 
-      const [first, second, third] = startingPoint.tasks;
-      const action = tasks.remove(second.id);
-      const state = reducer(startingPoint, action);
+      store.dispatch(tasks.remove(second.id));
 
-      expect(state.tasks).toEqual([first, third]);
+      expect(store.getState()).toHaveProperty('tasks', [first, third]);
     });
   });
 
   describe('clearCompleted(...)', () => {
     it('removes all completed tasks', () => {
-      const startingPoint = {
-        ...initialState,
-        tasks: [
-          createTask({ completed: true, description: 'learn karate' }),
-          createTask({ completed: false, description: 'master the piano' }),
-          createTask({ completed: true, description: 'get out of bed' }),
-        ],
-      };
+      const taskList = [
+        createTask({ completed: true, description: 'learn karate' }),
+        createTask({ completed: false, description: 'master the piano' }),
+        createTask({ completed: true, description: 'get out of bed' }),
+      ];
 
-      const inProgressTask = startingPoint.tasks[1];
-      const state = reducer(startingPoint, tasks.clearCompleted());
+      const store = setup({ ...initialState, tasks: taskList });
+      store.dispatch(tasks.clearCompleted());
 
-      expect(state.tasks).toEqual([inProgressTask]);
+      expect(store.getState()).toHaveProperty('tasks', [taskList[1]]);
     });
   });
 
   describe('clearAll(...)', () => {
     it('removes all the tasks', () => {
-      const startingPoint = {
+      const store = setup({
         ...initialState,
         tasks: [
           createTask({ description: 'feed the penguins' }),
           createTask({ description: 'learn to yodel' }),
           createTask({ description: 'increase carbon emissions' }),
         ],
-      };
+      });
 
-      const state = reducer(startingPoint, tasks.clearAll());
+      store.dispatch(tasks.clearAll());
 
-      expect(state).toEqual(initialState);
+      expect(store.getState()).toEqual(initialState);
     });
   });
 
   describe('changeView(...)', () => {
     it('updates the active filter', () => {
-      const action = tasks.changeView(TaskView.Complete);
-      const state = reducer(undefined, action);
+      const store = setup();
+      store.dispatch(tasks.changeView(TaskView.Complete));
 
-      expect(state.view).toBe(TaskView.Complete);
+      expect(store.getState()).toHaveProperty('view', TaskView.Complete);
     });
   });
 });
