@@ -29,6 +29,7 @@ export default createReducer(initialState, (handleAction) => [
   }),
 
   handleAction(news.loadPage, (state, results) => {
+    state.loading = false;
     state.results = results;
   }),
 

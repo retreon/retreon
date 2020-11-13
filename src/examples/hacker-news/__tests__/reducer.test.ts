@@ -1,16 +1,32 @@
-import forgeAction from '../../../utils/forge-action';
+import { Store } from 'redux';
+
 import * as news from '../actions';
-import reducer, { initialState, NewsResult } from '../reducer';
+import { initialState, NewsResult } from '../reducer';
+import { initializeStore } from '../redux-store';
+import * as mockedEffects from '../effects';
+
+jest.mock('../effects');
+
+const effects: jest.Mocked<typeof mockedEffects> = mockedEffects as any;
 
 /**
- * Note: async action creators are still a work in progress. Testing tools
- * aren't ready yet. Consider this a sneak peak.
+ * Note: async action testing patterns are still under experimentation.
+ * Consider this a "sneak peak".
  */
+const record = <State, T extends Store<State>>(store: T) => {
+  const states: State[] = [];
 
-let id = 0;
-const uuid = () => id++;
+  store.subscribe(() => {
+    states.push(store.getState());
+  });
+
+  return () => states;
+};
 
 describe('News reducer', () => {
+  let id = 0;
+  const uuid = () => id++;
+
   const createResult = <T>(patch?: T): NewsResult => ({
     headline: 'Microsoft ruled trustworthy again',
     url: 'http://microsoft.net/developers/developers/developers.aspx',
@@ -19,39 +35,48 @@ describe('News reducer', () => {
     ...patch,
   });
 
-  describe('optimistic(loadPage)', () => {
-    it('sets a loading flag', () => {
-      const action = forgeAction.optimistic(news.loadPage, 5);
-      const state = reducer(undefined, action);
+  beforeEach(() => {
+    effects.loadPage.mockResolvedValue([]);
+  });
+
+  describe('loadPage', () => {
+    it('sets a flag while loading', async () => {
+      const store = initializeStore();
+
+      const snapshot = record(store);
+      await store.dispatch(news.loadPage(5));
+      const [optimistic, done] = snapshot();
+
+      expect(optimistic).toHaveProperty('loading', true);
+      expect(done).toHaveProperty('loading', false);
+    });
+
+    it('sets the list of news results', async () => {
+      const results = [createResult()];
+      effects.loadPage.mockResolvedValue(results);
+
+      const store = initializeStore();
+      await store.dispatch(news.loadPage(5));
+
+      expect(store.getState()).toMatchObject({ results });
+    });
+  });
+
+  describe('upvote', () => {
+    it('increments the vote count', async () => {
+      const result = createResult();
+      const store = initializeStore({
+        ...initialState,
+        results: [result],
+      });
+
+      const snapshot = record(store);
+      jest.spyOn(store, 'dispatch');
+      await store.dispatch(news.upvote({ id: result.id }));
+      const [state] = snapshot();
 
       expect(state).toMatchObject({
-        loading: true,
-        results: [],
-        currentPage: 5,
-      });
-    });
-  });
-
-  describe('loadPage(...)', () => {
-    it('sets the list of news results', () => {
-      const results = [createResult()];
-      const action = forgeAction(news.loadPage, results);
-      const state = reducer(undefined, action);
-
-      expect(state).toMatchObject({ results });
-    });
-  });
-
-  describe('optimistic(upvote)', () => {
-    it('increments the vote count', () => {
-      const result = createResult();
-      const startingPoint = { ...initialState, results: [result] };
-
-      const action = forgeAction.optimistic(news.upvote, { id: result.id });
-      const state = reducer(startingPoint, action);
-
-      expect(state.results[0]).toMatchObject({
-        upvotes: result.upvotes + 1,
+        results: [{ upvotes: result.upvotes + 1 }],
       });
     });
   });
