@@ -12,6 +12,8 @@ Added:
 - Error dispatches for async action creators. Just use `throw`.
 - Support for dispatching synchronous iterators. This is an advanced and
   rarely useful feature.
+- `swallow(...)` class mixin marking known errors that are safe to ignore.
+  This feature is experimental.
 
 Removed:
 - Payload type inference in `handleAction.error(...)` (`throw` types aren't
