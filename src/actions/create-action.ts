@@ -1,6 +1,5 @@
 import { ActionConstant } from '../types/actions';
 import { CreateAction } from '../types/create-action';
-import { isFailure, getValue } from './failure';
 import createAsyncAction from './create-async-action';
 import bindActionType from './bind-action-type';
 import validateActionType from './validate-action-type';
@@ -27,17 +26,7 @@ const createAction = (
       return { type: actionType, payload: input };
     }
 
-    const payload = effect(input);
-
-    if (isFailure(payload)) {
-      return {
-        type: actionType,
-        error: true,
-        payload: getValue(payload),
-      };
-    }
-
-    return { type: actionType, payload };
+    return { type: actionType, payload: effect(input) };
   }
 
   return bindActionType(actionType, function* (input: any) {

@@ -1,7 +1,7 @@
 import { nothing } from 'immer';
 import { createStore, applyMiddleware } from 'redux';
 
-import { createReducer, createAction, failure } from '../../index';
+import { createReducer, createAction } from '../../index';
 import { expectType } from '../../types/assertions';
 import forgeAction from '../../utils/forge-action';
 import generatorMiddleware from '../../middleware/async-generator-middleware';
@@ -192,17 +192,6 @@ describe('createReducer', () => {
 
       expect(onSuccess).toHaveBeenCalled();
       expect(onFailure).not.toHaveBeenCalled();
-    });
-
-    it('infers error types', () => {
-      const die = createAction('type', () => failure('content'));
-
-      createReducer(0, (handleAction) => [
-        handleAction(die, (state, error) => {
-          expectType<number>(state);
-          expectType<string>(error);
-        }),
-      ]);
     });
   });
 
