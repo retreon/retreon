@@ -1,6 +1,6 @@
 {
   "name": "retreon",
-  "version": "0.3.0",
+  "version": "0.4.0-rc.1",
   "description": "A delightful, type-safe redux toolkit",
   "main": "dist/index.js",
   "repository": "https://github.com/PsychoLlama/retreon",
