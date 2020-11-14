@@ -1,5 +1,5 @@
-__tests__
-src/examples/
+__tests__/
+examples/
 src/types/
 doc/adr/
 jest.config.js

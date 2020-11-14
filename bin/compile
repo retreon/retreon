@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+if [[ -d dist/ ]]; then
+  rm -r dist
+fi
+
+babel src -d dist --ignore __tests__ -x .js,.ts
+tsc
