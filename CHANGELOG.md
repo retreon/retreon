@@ -6,6 +6,8 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 [semver](https://semver.org/).
 
 ## [UNRELEASED]
+Changed:
+- Enabled several compiler optimizations for smaller bundles.
 
 ## [0.3.0] - 2020-11-13
 Added:
