@@ -1,10 +1,8 @@
+.github/
 __tests__/
 examples/
-src/types/
-doc/adr/
-jest.config.js
-run-tests
+doc/
+bin/
+src/
 tsconfig.json
-.travis.yml
-.prettierrc.yml
 .eslintrc.yml
