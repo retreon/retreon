@@ -1,8 +1,8 @@
 import { createStore, applyMiddleware } from 'redux';
+import { middleware } from 'retreon';
 
 import reducer from '../reducer';
 import * as counter from '../actions';
-import { middleware } from '../../../index';
 
 describe('Counter reducer', () => {
   const setup = () => createStore(reducer, applyMiddleware(middleware));

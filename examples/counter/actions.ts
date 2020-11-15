@@ -1,4 +1,4 @@
-import { createAction } from '../../index';
+import { createAction } from 'retreon';
 
 export const increment = createAction('increment');
 export const decrement = createAction('decrement');

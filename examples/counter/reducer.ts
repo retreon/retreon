@@ -1,4 +1,5 @@
-import { createReducer } from '../../index';
+import { createReducer } from 'retreon';
+
 import * as counter from './actions';
 
 export default createReducer(0, (handleAction) => [

@@ -1,4 +1,5 @@
-import { createAction } from '../../index';
+import { createAction } from 'retreon';
+
 import { Task, TaskView } from './reducer';
 
 export const create = createAction<Task>('tasks/create');

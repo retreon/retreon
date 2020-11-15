@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+# The examples need retreon. Since this isn't a monorepo, it requires manual
+# installation.
+if [[ ! -d examples/node_modules ]]; then
+  (cd examples; yarn install)
+fi
+
 yarn test:lint || fail=1
 yarn test:unit || fail=1
 

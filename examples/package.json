@@ -1,0 +1,12 @@
+{
+  "name": "@retreon/examples",
+  "version": "0.1.0",
+  "description": "A collection of small examples demoing retreon",
+  "repository": "https://github.com/retreon/retreon",
+  "author": "Jesse Gibson <JesseTheGibson@gmail.com>",
+  "private": true,
+  "dependencies": {
+    "retreon": "link:../",
+    "redux": "4.x.x"
+  }
+}

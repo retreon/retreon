@@ -1,4 +1,5 @@
-import { createReducer } from '../../index';
+import { createReducer } from 'retreon';
+
 import * as news from './actions';
 
 type State = {
