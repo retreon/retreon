@@ -23,9 +23,9 @@ handling, async actions, and state changes are first class citizens.
 
 Retreon is [FSA compliant](https://github.com/redux-utilities/flux-standard-action#readme).
 
-## [Examples](https://github.com/PsychoLlama/retreon/tree/master/src/examples)
+## [Examples](https://github.com/PsychoLlama/retreon/tree/master/examples)
 For a quick introduction, take a look at some [retreon
-examples](https://github.com/PsychoLlama/retreon/tree/master/src/examples).
+examples](https://github.com/PsychoLlama/retreon/tree/master/examples).
 
 ## Documentation
 > :construction: documentation is a work in progress.
