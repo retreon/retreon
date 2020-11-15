@@ -1,14 +1,12 @@
-import { createStore, applyMiddleware } from 'redux';
-
 import * as news from '../actions';
-import { middleware } from '../../../index';
 import http from '../http';
+import { initializeStore } from '../redux-store';
 
 jest.mock('../http');
 
 describe('News actions', () => {
   const dispatch = <T extends AsyncIterator<any>>(iterator: T) => {
-    const store = createStore((t) => t, applyMiddleware(middleware));
+    const store = initializeStore();
     return store.dispatch(iterator);
   };
 

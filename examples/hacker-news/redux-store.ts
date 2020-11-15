@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
+import { middleware } from 'retreon';
 
-import { middleware } from '../../index';
 import reducer, { initialState } from './reducer';
 
 // Create a redux store using the retreon middleware. Optionally, hydrate the

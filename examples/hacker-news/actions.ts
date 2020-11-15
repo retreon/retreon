@@ -1,4 +1,5 @@
-import { createAction } from '../../index';
+import { createAction } from 'retreon';
+
 import * as effects from './effects';
 
 export const loadPage = createAction.async('news/load-page', effects.loadPage);

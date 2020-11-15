@@ -1,8 +1,8 @@
 import { createStore, applyMiddleware } from 'redux';
+import { middleware } from 'retreon';
 
 import reducer, { initialState, Task, TaskView } from '../reducer';
 import * as tasks from '../actions';
-import { middleware } from '../../../index';
 
 let id = 0;
 const uuid = () => id++;
