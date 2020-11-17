@@ -1,15 +1,9 @@
-import * as news from '../actions';
 import http from '../http';
-import { initializeStore } from '../redux-store';
+import * as news from '../effects';
 
 jest.mock('../http');
 
 describe('News actions', () => {
-  const dispatch = <T extends AsyncIterator<any>>(iterator: T) => {
-    const store = initializeStore();
-    return store.dispatch(iterator);
-  };
-
   const mockGetResponse = <T>(data: T) => {
     (http.get as any).mockResolvedValue({ data });
     return data;
@@ -22,24 +16,21 @@ describe('News actions', () => {
 
   describe('loadPage(...)', () => {
     it('requests the page', async () => {
-      const page = 6;
-      const iterator = news.loadPage(page);
-      await dispatch(iterator);
+      await news.loadPage(6);
 
-      expect(http.get).toHaveBeenCalledWith(`/news/?page=${page}`);
+      expect(http.get).toHaveBeenCalledWith(`/news/?page=6`);
     });
 
     it('resolves with the page data', async () => {
       const pageData = mockGetResponse({ mock: 'page-data' });
-      const iterator = news.loadPage(20);
 
-      await expect(dispatch(iterator)).resolves.toEqual(pageData);
+      await expect(news.loadPage(20)).resolves.toEqual(pageData);
     });
   });
 
   describe('upvote(...)', () => {
     it('upvotes the news listing', async () => {
-      await dispatch(news.upvote({ id: 45 }));
+      await news.upvote({ id: 45 });
 
       expect(http.post).toHaveBeenCalledWith('/news/article/45/upvote/');
     });
