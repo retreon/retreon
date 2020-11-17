@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 
-import { ReducerDefinition } from '../types/create-reducer';
+import { ReducerDefinition } from './create-reducer';
 import { ActionConstant } from '../types/actions';
 import ReducerType from '../constants/reducer-type';
 

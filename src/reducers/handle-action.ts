@@ -1,5 +1,5 @@
 import { ActionTypeCoercible } from '../types/actions';
-import { ReducerDefinition } from '../types/create-reducer';
+import { ReducerDefinition } from './create-reducer';
 import assert from '../utils/assert';
 import getActionType from './get-action-type';
 import ReducerType from '../constants/reducer-type';
