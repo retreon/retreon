@@ -2,22 +2,22 @@ import { AsyncActionSequence } from '../actions/create-async-action';
 import { ActionSequence } from '../actions/create-action';
 import { VoidAction, ActionSuccess, ActionFailure } from './actions';
 
-export type SuccessPayload<A extends (...args: any[]) => any> = ReturnType<
-  A
-> extends AsyncActionSequence<any, infer Payload>
+export type SuccessPayload<
+  Factory extends (...args: any[]) => any
+> = ReturnType<Factory> extends ActionSequence<
+  ActionFailure<unknown> | ActionSuccess<infer Payload>
+>
   ? Payload
-  : ReturnType<A> extends ActionSequence<infer Yield>
-  ? Yield extends VoidAction
-    ? Yield
-    : Yield extends ActionSuccess<infer Payload>
-    ? Payload
-    : Yield extends ActionFailure<any> | ActionSuccess<infer Payload>
-    ? Payload
-    : never
+  : ReturnType<Factory> extends ActionSequence<ActionSuccess<infer Payload>>
+  ? Payload
+  : ReturnType<Factory> extends ActionSequence<VoidAction>
+  ? VoidAction
+  : ReturnType<Factory> extends AsyncActionSequence<any, infer Payload>
+  ? Payload
   : never;
 
 export type OptimisticPayload<
-  A extends (...args: any[]) => AsyncGenerator<any>
-> = ReturnType<A> extends AsyncActionSequence<infer Payload, any>
+  Factory extends (...args: any[]) => AsyncGenerator<any>
+> = ReturnType<Factory> extends AsyncActionSequence<infer Payload, any>
   ? Payload
   : never;
