@@ -8,6 +8,7 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 ## [UNRELEASED]
 Added:
 - Support for older browsers (back through IE 11, currently untested).
+- Dispatch return values in generator `yield` expressions.
 
 Changed:
 - Enabled several compiler optimizations for smaller bundles.

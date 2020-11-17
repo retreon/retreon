@@ -45,6 +45,17 @@ describe('Redux middleware', () => {
       expectType<number>(result);
       expect(result).toBe(resolveValue);
     });
+
+    it('resumes execution with the dispatch return value', async () => {
+      const { store } = setup();
+
+      async function* action() {
+        const action = { type: 'dispatch-me' };
+        expect(yield action).toEqual(action);
+      }
+
+      await store.dispatch(action());
+    });
   });
 
   describe('sync iterator', () => {
@@ -73,6 +84,17 @@ describe('Redux middleware', () => {
 
       const result = store.dispatch(action());
       expect(result).toBe('9,000% APY');
+    });
+
+    it('resumes execution with the dispatched result', () => {
+      const { store } = setup();
+
+      function* action() {
+        const action = { type: 'action' };
+        expect(yield action).toEqual(action);
+      }
+
+      store.dispatch(action());
     });
   });
 });

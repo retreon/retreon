@@ -41,17 +41,20 @@ const consumeAsyncIterator = async <
   ReturnType
 >(
   dispatch: Dispatch,
-  iterator: AsyncIterator<Action, ReturnType>,
+  iterator: AsyncIterator<Action, ReturnType, unknown>,
 ): Promise<ReturnType> => {
+  let prevDispatchResult: unknown;
+
   while (true) {
-    // TODO: Decide what, if anything, should go into `.next(...)`.
-    const result: IteratorResult<Action, ReturnType> = await iterator.next();
+    const result: IteratorResult<Action, ReturnType> = await iterator.next(
+      prevDispatchResult,
+    );
 
     // The iterator finished. Resolve with the return value.
     if (result.done) return result.value;
 
     // The iterator yielded a value. Dispatch it.
-    await dispatch(result.value);
+    prevDispatchResult = await dispatch(result.value);
   }
 };
 
@@ -61,14 +64,18 @@ const consumeSyncIterator = <
   ReturnType
 >(
   dispatch: Dispatch,
-  iterator: Iterator<Action, ReturnType>,
+  iterator: Iterator<Action, ReturnType, unknown>,
 ) => {
+  let prevDispatchResult: unknown;
+
   while (true) {
-    const result: IteratorResult<Action, ReturnType> = iterator.next();
+    const result: IteratorResult<Action, ReturnType> = iterator.next(
+      prevDispatchResult,
+    );
 
     if (result.done) return result.value;
 
-    dispatch(result.value);
+    prevDispatchResult = dispatch(result.value);
   }
 };
 
