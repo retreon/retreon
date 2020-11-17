@@ -12,6 +12,10 @@ Added:
 Changed:
 - Enabled several compiler optimizations for smaller bundles.
 
+Fixed:
+- `unknown` payload type regression on reducers handling synchronous action
+  creators with effects.
+
 ## [0.3.0] - 2020-11-13
 Added:
 - Error handling for every error thrown in an action, not just `failure(...)`

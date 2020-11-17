@@ -1,15 +1,21 @@
-import { Action } from '../types/actions';
-import { CreateReducer } from '../types/create-reducer';
+import { Draft, nothing } from 'immer';
+
 import handleAction from './handle-action';
 import mapActionsToReducers from './map-actions-to-reducers';
 import callOnce from '../utils/call-once';
 import assert from '../utils/assert';
 import { isActionFailure, isOptimisticAction } from '../utils/action-variant';
+import { Action, ActionConstant } from '../types/actions';
+import ReducerType from '../constants/reducer-type';
+import { SuccessPayload, OptimisticPayload } from '../types/payload';
 
-function createReducer<State>(
+export default function createReducer<
+  State,
+  ActionHandlerFactory extends ReducerDefinitionFactory<State>
+>(
   initialState: State,
-  reducerFactory: (...args: any) => any,
-) {
+  reducerFactory: ActionHandlerFactory,
+): (state: undefined | State, action: Action<any>) => State {
   assert(
     typeof reducerFactory === 'function',
     'createReducer(...) expects a function.',
@@ -50,4 +56,93 @@ function createReducer<State>(
   return reducer;
 }
 
-export default createReducer as CreateReducer;
+// `createReducer` has a circular type which makes the definition somewhat
+// tedious. We can't define `handleAction` without knowing how you're calling
+// `createReducer`, and we can't define how to call `createReducer` without
+// knowing the type for `handleAction`. The state and reducer types are
+// codependent.
+//
+// Lifting `handleAction` to a parametrized interface allows us to express the
+// type for the reducer parameter and in turn, `createReducer`.
+interface ReducerDefinitionFactory<State> {
+  /**
+   * Use this callback to define all your reducers.
+   * @param handleAction Associates an action with a reducer.
+   * @return A list of reducers defined using `handleAction(...)`.
+   * @example
+   * createReducer(0, handleAction => [
+   *   handleAction(action, reducer),
+   * ])
+   */
+  (handleAction: HandleAction<State>): Array<ReducerDefinition>;
+}
+
+export interface ReducerDefinition {
+  readonly reducerType: ReducerType;
+  readonly actionType: ActionConstant;
+  readonly reducer: (...args: any) => any;
+}
+
+interface HandleAction<State> {
+  /**
+   * Associates a reducer with an action creator.
+   * @param actionCreator An action creator defined with `createAction(...)`.
+   * @param reducer A handler invoked whenever the action is dispatched. It's
+   * okay to mutate state here.
+   * @example
+   * handleAction(increment, state => {
+   *   state.count++
+   * })
+   */
+  <
+    ActionCreator extends (...args: any) => any,
+    Reducer extends (
+      state: Draft<State>,
+      action: SuccessPayload<ActionCreator>,
+    ) => NextState<State>
+  >(
+    actionCreator: ActionCreator,
+    reducer: Reducer,
+  ): ReducerDefinition;
+
+  /**
+   * Associates an action with an error handler.
+   * @param actionCreator An action creator defined with `createAction(...)`.
+   * @param reducer A handler invoked whenever the action is dispatched. It's
+   * okay to mutate state here.
+   * @example
+   * handleAction.error(loadTheme, state => {
+   *   state.theme = THEME_FALLBACK
+   * })
+   */
+  error<
+    ActionCreator extends (...args: any) => any,
+    Reducer extends (state: Draft<State>, error: unknown) => NextState<State>
+  >(
+    actionCreator: ActionCreator,
+    reducer: Reducer,
+  ): ReducerDefinition;
+
+  /**
+   * Associates an async action with an optimistic handler.
+   * @param actionCreator An action creator defined with `createAction.async(...)`.
+   * @param reducer A handler invoked whenever the action is dispatched. It's
+   * okay to mutate state here.
+   * @example
+   * handleAction.optimistic(search, state => {
+   *   state.loading = true
+   * })
+   */
+  optimistic<
+    ActionCreator extends (...args: any) => AsyncGenerator<any, any>,
+    Reducer extends (
+      state: Draft<State>,
+      action: OptimisticPayload<ActionCreator>,
+    ) => NextState<State>
+  >(
+    actionCreator: ActionCreator,
+    reducer: Reducer,
+  ): ReducerDefinition;
+}
+
+type NextState<State> = void | State | typeof nothing;
