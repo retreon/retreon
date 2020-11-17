@@ -24,14 +24,14 @@ export default function createAsyncAction<Effect extends AsyncFunction>(
   type: ActionConstant,
   effect: Effect,
 ): Effect extends () => Promise<infer TReturn>
-  ? CoercibleAction<[], ActionSequence<void, TReturn>>
+  ? CoercibleAction<[], AsyncActionSequence<void, TReturn>>
   : never;
 
 export default function createAsyncAction<Effect extends AnyAsyncFunction>(
   type: ActionConstant,
   effect: Effect,
 ): Effect extends (input: infer Input, ...args: any) => Promise<infer TReturn>
-  ? CoercibleAction<[Input], ActionSequence<Input, TReturn>>
+  ? CoercibleAction<[Input], AsyncActionSequence<Input, TReturn>>
   : never;
 
 export default function createAsyncAction<
@@ -76,7 +76,7 @@ export default function createAsyncAction<
 type AsyncFunction = () => Promise<any>;
 type AnyAsyncFunction = (...args: any) => Promise<any>;
 
-type ActionSequence<Optimistic, TReturn> = AsyncGenerator<
+export type AsyncActionSequence<Optimistic, TReturn> = AsyncGenerator<
   | OptimisticAction<Optimistic>
   | ActionSuccess<TReturn>
   | ActionFailure<unknown>,

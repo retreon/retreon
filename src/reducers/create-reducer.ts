@@ -5,14 +5,9 @@ import mapActionsToReducers from './map-actions-to-reducers';
 import callOnce from '../utils/call-once';
 import assert from '../utils/assert';
 import { isActionFailure, isOptimisticAction } from '../utils/action-variant';
-import {
-  Action,
-  ActionSuccess,
-  ActionFailure,
-  OptimisticAction,
-  ActionConstant,
-} from '../types/actions';
+import { Action, ActionConstant } from '../types/actions';
 import ReducerType from '../constants/reducer-type';
+import { SuccessPayload, OptimisticPayload } from '../types/payload';
 
 export default function createReducer<
   State,
@@ -61,6 +56,14 @@ export default function createReducer<
   return reducer;
 }
 
+// `createReducer` has a circular type which makes the definition somewhat
+// tedious. We can't define `handleAction` without knowing how you're calling
+// `createReducer`, and we can't define how to call `createReducer` without
+// knowing the type for `handleAction`. The state and reducer types are
+// codependent.
+//
+// Lifting `handleAction` to a parametrized interface allows us to express the
+// type for the reducer parameter and in turn, `createReducer`.
 interface ReducerDefinitionFactory<State> {
   /**
    * Use this callback to define all your reducers.
@@ -143,25 +146,3 @@ interface HandleAction<State> {
 }
 
 type NextState<State> = void | State | typeof nothing;
-
-type ReduxAction<ActionCreator> = ActionCreator extends (
-  ...args: any
-) => infer Payload
-  ? Payload
-  : never;
-
-type SuccessPayload<ActionCreator extends (...args: any) => any> = ReduxAction<
-  ActionCreator
-> extends ActionFailure<any> | ActionSuccess<infer Payload>
-  ? Payload
-  : ReduxAction<ActionCreator> extends ActionSuccess<infer Payload>
-  ? Payload
-  : never;
-
-type OptimisticPayload<
-  ActionCreator extends (...args: any) => AsyncGenerator<any>
-> = ActionCreator extends (
-  ...args: any
-) => AsyncGenerator<OptimisticAction<infer Payload>>
-  ? Payload
-  : never;

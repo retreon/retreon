@@ -22,12 +22,12 @@ import {
  */
 export default function createAction(
   type: ActionConstant,
-): CoercibleAction<[], ActionIterator<VoidAction>>;
+): CoercibleAction<[], ActionSequence<VoidAction>>;
 
 // No effect. Just pass a payload.
 export default function createAction<Payload>(
   type: ActionConstant,
-): CoercibleAction<[Payload], ActionIterator<ActionSuccess<Payload>>>;
+): CoercibleAction<[Payload], ActionSequence<ActionSuccess<Payload>>>;
 
 // No arguments.
 export default function createAction<Effect extends () => any>(
@@ -94,9 +94,9 @@ export default function createAction(actionType: any, effect?: any) {
 // })
 createAction.async = createAsyncAction;
 
-type ActionIterator<Action> = Generator<Action, Action>;
+export type ActionSequence<Action> = Generator<Action, Action>;
 
 // If an effect is provided, we have to assume it can fail.
 type ActionOutcomesForEffect<
   Effect extends (...args: any[]) => any
-> = ActionIterator<ActionSuccess<ReturnType<Effect>> | ActionFailure<unknown>>;
+> = ActionSequence<ActionSuccess<ReturnType<Effect>> | ActionFailure<unknown>>;

@@ -152,6 +152,20 @@ describe('createAction', () => {
         expectType<number>(action.payload);
       }
     });
+
+    it('infers all major action branch types', () => {
+      const voidAction = createAction('void');
+      const unfailingAction = createAction<string>('unfailing');
+      const uncertainAction = createAction('type', () => 5);
+
+      expectType<{ payload?: void }>(voidAction().next().value);
+      expectType<{ payload: string }>(unfailingAction('t').next().value);
+
+      const { value: action } = uncertainAction().next();
+      if (action.error !== true) {
+        expectType<number>(action.payload);
+      }
+    });
   });
 
   describe('.async(...)', () => {
