@@ -17,12 +17,14 @@ import {
 export default function actionFactory<
   SuccessPayload = never,
   OptimisticPayload = never
->(actionType: ActionConstant) {
+>(
+  actionType: ActionConstant,
+): ActionFactory<SuccessPayload, OptimisticPayload> {
   return {
     /**
      * Signifies success and the end of the action.
      */
-    success: (payload: SuccessPayload): ActionSuccess<SuccessPayload> => ({
+    success: (payload) => ({
       type: actionType,
       payload,
     }),
@@ -31,7 +33,7 @@ export default function actionFactory<
      * Signifies permanent failure. The payload type is always unknown because
      * anything can go wrong.
      */
-    failure: (error: unknown): ActionFailure<unknown> => ({
+    failure: (error) => ({
       type: actionType,
       error: true,
       payload: error,
@@ -41,9 +43,7 @@ export default function actionFactory<
      * Signifies the start of a long-running task. Can be emitted multiple
      * times to provide progress updates.
      */
-    optimistic: (
-      payload: OptimisticPayload,
-    ): OptimisticAction<OptimisticPayload> => ({
+    optimistic: (payload) => ({
       type: actionType,
       payload,
       meta: {
@@ -51,4 +51,23 @@ export default function actionFactory<
       },
     }),
   };
+}
+
+export interface ActionFactory<SuccessPayload, OptimisticPayload> {
+  /**
+   * Signifies success and the end of the action.
+   */
+  success(payload: SuccessPayload): ActionSuccess<SuccessPayload>;
+
+  /**
+   * Signifies permanent failure. The payload type is always unknown because
+   * anything can go wrong.
+   */
+  failure(error: unknown): ActionFailure<unknown>;
+
+  /**
+   * Signifies the start of a long-running task. Can be emitted multiple
+   * times to provide progress updates.
+   */
+  optimistic(payload: OptimisticPayload): OptimisticAction<OptimisticPayload>;
 }
