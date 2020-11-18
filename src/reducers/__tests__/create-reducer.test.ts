@@ -6,6 +6,7 @@ import { expectType } from '../../types/assertions';
 import forgeAction from '../../utils/forge-action';
 import generatorMiddleware from '../../middleware/generator-middleware';
 import { mixin } from '../../utils/errors';
+import actionFactory from '../../actions/action-factory';
 
 describe('createReducer', () => {
   class KnownError extends mixin(Error) {}
@@ -152,6 +153,20 @@ describe('createReducer', () => {
           expectType<string>(value);
         }),
       ]);
+    });
+
+    it('supports binding reducers to action factory types', () => {
+      const factory = actionFactory<string>('explicit');
+
+      const reducer = createReducer('', (handleAction) => [
+        handleAction(factory, (_state, payload) => {
+          return payload;
+        }),
+      ]);
+
+      const state = reducer(undefined, factory.success('called'));
+
+      expect(state).toBe('called');
     });
   });
 

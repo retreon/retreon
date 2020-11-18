@@ -1,4 +1,4 @@
-import actionFactory from '../action-factory';
+import actionFactory, { ACTION_TYPE } from '../action-factory';
 import { expectType } from '../../types/assertions';
 import {
   isActionSuccess,
@@ -7,6 +7,12 @@ import {
 } from '../../utils/action-variant';
 
 describe('actionFactory', () => {
+  it('attaches the action type to a secret field', () => {
+    const factory = actionFactory('action-type');
+
+    expect(factory[ACTION_TYPE]).toBe('action-type');
+  });
+
   it('returns the correct action type', () => {
     const actionType = 'pod-bay-doors/open';
     const fire = actionFactory<void, void>(actionType);

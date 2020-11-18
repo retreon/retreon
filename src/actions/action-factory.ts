@@ -21,6 +21,8 @@ export default function actionFactory<
   actionType: ActionConstant,
 ): ActionFactory<SuccessPayload, OptimisticPayload> {
   return {
+    [ACTION_TYPE]: actionType,
+
     /**
      * Signifies success and the end of the action.
      */
@@ -53,6 +55,8 @@ export default function actionFactory<
   };
 }
 
+export const ACTION_TYPE = Symbol('retreon:action-type');
+
 export interface ActionFactory<SuccessPayload, OptimisticPayload> {
   /**
    * Signifies success and the end of the action.
@@ -70,4 +74,6 @@ export interface ActionFactory<SuccessPayload, OptimisticPayload> {
    * times to provide progress updates.
    */
   optimistic(payload: OptimisticPayload): OptimisticAction<OptimisticPayload>;
+
+  [ACTION_TYPE]: string;
 }

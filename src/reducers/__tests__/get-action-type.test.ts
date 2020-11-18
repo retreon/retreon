@@ -1,5 +1,6 @@
 import { createAction } from '../../index';
 import getActionType from '../get-action-type';
+import actionFactory from '../../actions/action-factory';
 
 describe('getActionType', () => {
   it('returns the action type', () => {
@@ -19,6 +20,12 @@ describe('getActionType', () => {
     action.toString = () => 'yo';
 
     expect(getActionType(action as any)).toBe('yo');
+  });
+
+  it('extracts the action type when given an action factory', () => {
+    const factory = actionFactory('action-type');
+
+    expect(getActionType(factory)).toBe('action-type');
   });
 
   it('blows up if you try to pass an unsupported type', () => {
