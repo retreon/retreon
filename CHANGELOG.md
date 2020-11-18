@@ -6,6 +6,8 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 [semver](https://semver.org/).
 
 ## [UNRELEASED]
+- Upgraded immer from `7.0.14` to `8.0.0` (see [release
+  notes](https://github.com/immerjs/immer/releases/tag/v8.0.0)).
 
 ## [0.4.0] - 2020-11-18
 Added:
