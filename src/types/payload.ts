@@ -24,7 +24,7 @@ export type SuccessPayload<
     : ReturnType<Factory> extends ActionSequence<ActionSuccess<infer Payload>>
     ? Payload
     : ReturnType<Factory> extends ActionSequence<VoidAction>
-    ? VoidAction
+    ? void
     : ReturnType<Factory> extends AsyncActionSequence<any, infer Payload>
     ? Payload
     : never
