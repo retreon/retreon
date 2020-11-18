@@ -153,6 +153,20 @@ describe('createReducer', () => {
         }),
       ]);
     });
+
+    it('supports binding reducers to action factory types', () => {
+      const factory = createAction.factory<string>('explicit');
+
+      const reducer = createReducer('', (handleAction) => [
+        handleAction(factory, (_state, payload) => {
+          return payload;
+        }),
+      ]);
+
+      const state = reducer(undefined, factory.success('called'));
+
+      expect(state).toBe('called');
+    });
   });
 
   describe('handleAction.error', () => {

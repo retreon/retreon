@@ -21,6 +21,12 @@ describe('getActionType', () => {
     expect(getActionType(action as any)).toBe('yo');
   });
 
+  it('extracts the action type when given an action factory', () => {
+    const factory = createAction.factory('action-type');
+
+    expect(getActionType(factory)).toBe('action-type');
+  });
+
   it('blows up if you try to pass an unsupported type', () => {
     expect(() => getActionType(null as any)).toThrow(/expected/i);
     expect(() => getActionType(undefined as any)).toThrow(/expected/i);

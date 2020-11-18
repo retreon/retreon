@@ -8,6 +8,7 @@ import { isActionFailure, isOptimisticAction } from '../utils/action-variant';
 import { Action, ActionConstant } from '../types/actions';
 import ReducerType from '../constants/reducer-type';
 import { SuccessPayload, OptimisticPayload } from '../types/payload';
+import { ActionFactory } from '../actions/action-factory';
 
 export default function createReducer<
   State,
@@ -95,7 +96,7 @@ interface HandleAction<State> {
    * })
    */
   <
-    ActionCreator extends (...args: any) => any,
+    ActionCreator extends ActionFactory<any, any> | ((...args: any) => any),
     Reducer extends (
       state: Draft<State>,
       action: SuccessPayload<ActionCreator>,
@@ -116,7 +117,7 @@ interface HandleAction<State> {
    * })
    */
   error<
-    ActionCreator extends (...args: any) => any,
+    ActionCreator extends ActionFactory<any, any> | ((...args: any) => any),
     Reducer extends (state: Draft<State>, error: unknown) => NextState<State>
   >(
     actionCreator: ActionCreator,
@@ -134,7 +135,9 @@ interface HandleAction<State> {
    * })
    */
   optimistic<
-    ActionCreator extends (...args: any) => AsyncGenerator<any, any>,
+    ActionCreator extends
+      | ActionFactory<any, any>
+      | ((...args: any) => AsyncGenerator<any, any>),
     Reducer extends (
       state: Draft<State>,
       action: OptimisticPayload<ActionCreator>,
