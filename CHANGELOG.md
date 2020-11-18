@@ -6,6 +6,8 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 [semver](https://semver.org/).
 
 ## [UNRELEASED]
+
+## [0.4.0] - 2020-11-18
 Added:
 - Support for older browsers (back through IE 11, currently untested).
 - Dispatch return values in generator `yield` expressions.
@@ -51,7 +53,8 @@ Fixed:
 ## [0.1.0] - 2020-02-19
 Initial release.
 
-[UNRELEASED]: https://github.com/PsychoLlama/retreon/compare/v0.3.0...HEAD
+[UNRELEASED]: https://github.com/PsychoLlama/retreon/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/PsychoLlama/retreon/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/PsychoLlama/retreon/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/PsychoLlama/retreon/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/PsychoLlama/retreon/releases/tag/v0.1.0
