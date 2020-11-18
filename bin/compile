@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-if [[ -d dist/ ]]; then rm -r dist; fi
-if [[ -d es/ ]]; then rm -r es; fi
-
-PRESERVE_MODULES=1 babel src -d es --ignore __tests__ -x .js,.ts
-babel src -d dist --ignore __tests__ -x .js,.ts
-tsc # Emits type declarations for the main entry point.
