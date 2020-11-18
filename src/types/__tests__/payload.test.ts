@@ -1,6 +1,5 @@
 import createAction from '../../actions/create-action';
 import { SuccessPayload, OptimisticPayload } from '../payload';
-import actionFactory from '../../actions/action-factory';
 import { expectType } from '../assertions';
 
 describe('Payload type inference', () => {
@@ -24,7 +23,7 @@ describe('Payload type inference', () => {
     });
 
     it('infers payload types from action factories', () => {
-      const factory = actionFactory<string, number>('type');
+      const factory = createAction.factory<string, number>('type');
 
       expectType<SuccessPayload<typeof factory>>('string');
     });
@@ -45,7 +44,7 @@ describe('Payload type inference', () => {
     });
 
     it('infers payload types from action factories', () => {
-      const factory = actionFactory<number, string>('optimistic');
+      const factory = createAction.factory<number, string>('optimistic');
 
       expectType<OptimisticPayload<typeof factory>>('string');
     });

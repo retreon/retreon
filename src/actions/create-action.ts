@@ -9,6 +9,7 @@ import {
   ActionFailure,
   VoidAction,
 } from '../types/actions';
+import createActionFactory from './action-factory';
 
 /**
  * Returns a function which generates actions of the given type.
@@ -93,6 +94,9 @@ export default function createAction(actionType: any, effect?: any) {
 //   await http.put('/users/self/profile-photo/', photo)
 // })
 createAction.async = createAsyncAction;
+
+// Advanced usage: action factory for generator functions.
+createAction.factory = createActionFactory;
 
 export type ActionSequence<Action> = Generator<Action, Action>;
 

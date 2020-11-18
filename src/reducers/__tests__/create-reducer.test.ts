@@ -6,7 +6,6 @@ import { expectType } from '../../types/assertions';
 import forgeAction from '../../utils/forge-action';
 import generatorMiddleware from '../../middleware/generator-middleware';
 import { mixin } from '../../utils/errors';
-import actionFactory from '../../actions/action-factory';
 
 describe('createReducer', () => {
   class KnownError extends mixin(Error) {}
@@ -156,7 +155,7 @@ describe('createReducer', () => {
     });
 
     it('supports binding reducers to action factory types', () => {
-      const factory = actionFactory<string>('explicit');
+      const factory = createAction.factory<string>('explicit');
 
       const reducer = createReducer('', (handleAction) => [
         handleAction(factory, (_state, payload) => {

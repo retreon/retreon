@@ -1,4 +1,4 @@
-import actionFactory, { ACTION_TYPE } from '../action-factory';
+import createActionFactory, { ACTION_TYPE } from '../action-factory';
 import { expectType } from '../../types/assertions';
 import {
   isActionSuccess,
@@ -6,16 +6,16 @@ import {
   isOptimisticAction,
 } from '../../utils/action-variant';
 
-describe('actionFactory', () => {
+describe('createActionFactory', () => {
   it('attaches the action type to a secret field', () => {
-    const factory = actionFactory('action-type');
+    const factory = createActionFactory('action-type');
 
     expect(factory[ACTION_TYPE]).toBe('action-type');
   });
 
   it('returns the correct action type', () => {
     const actionType = 'pod-bay-doors/open';
-    const fire = actionFactory<void, void>(actionType);
+    const fire = createActionFactory<void, void>(actionType);
 
     expect(fire.optimistic()).toHaveProperty('type', actionType);
     expect(fire.success()).toHaveProperty('type', actionType);
@@ -24,7 +24,7 @@ describe('actionFactory', () => {
 
   describe('success', () => {
     it('returns a plain action with a payload', () => {
-      const fire = actionFactory<string>('fire');
+      const fire = createActionFactory<string>('fire');
       const action = fire.success('payload');
 
       expect(isActionSuccess(action)).toBe(true);
@@ -35,7 +35,7 @@ describe('actionFactory', () => {
 
   describe('failure', () => {
     it('returns an unknown payload type', () => {
-      const fire = actionFactory<string>('fire');
+      const fire = createActionFactory<string>('fire');
       const error = new Error('testing factory errors');
       const action = fire.failure(error);
 
@@ -47,7 +47,7 @@ describe('actionFactory', () => {
 
   describe('optimistic', () => {
     it('returns the right payload and meta type', () => {
-      const fire = actionFactory<string, number>('fire');
+      const fire = createActionFactory<string, number>('fire');
       const action = fire.optimistic(500);
 
       expect(isOptimisticAction(action)).toBe(true);

@@ -14,7 +14,7 @@ import {
  * @example
  * createAction.factory<SuccessType, OptimisticType>('load')
  */
-export default function actionFactory<
+export default function createActionFactory<
   SuccessPayload = never,
   OptimisticPayload = never
 >(
