@@ -8,8 +8,6 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 ## [UNRELEASED]
 - Upgraded immer from `7.0.14` to `8.0.0` (see [release
   notes](https://github.com/immerjs/immer/releases/tag/v8.0.0)).
-- More compiler optimizations (switched to
-  [tsdx](https://github.com/formium/tsdx/) build system).
 
 ## [0.4.0] - 2020-11-18
 Added:

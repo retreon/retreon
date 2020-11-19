@@ -28,5 +28,40 @@ describe('Error utils', () => {
       expect(isKnownError(null)).toBe(false);
       expect(isKnownError(undefined)).toBe(false);
     });
+
+    it('automatically assigns an error name', () => {
+      class CustomError extends mixin(Error) {}
+
+      expect(new CustomError('testing custom errors')).toHaveProperty(
+        'name',
+        'CustomError',
+      );
+    });
+
+    it('defaults to the current error name when anonymous', () => {
+      const error = new (class extends mixin(TypeError) {})();
+
+      expect(error).toHaveProperty('name', TypeError.name);
+    });
+
+    it('uses the given name if explicitly provided', () => {
+      class CustomError extends mixin(Error) {
+        name = 'NamedError';
+      }
+
+      expect(new CustomError('testing named errors')).toHaveProperty(
+        'name',
+        'NamedError',
+      );
+    });
+
+    it('does not set its own name when used as a plain wrapper', () => {
+      const CustomError = mixin(TypeError);
+
+      expect(new CustomError('testing named errors')).toHaveProperty(
+        'name',
+        'TypeError',
+      );
+    });
   });
 });
