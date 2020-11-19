@@ -1,8 +1,0 @@
-.github/
-__tests__/
-examples/
-doc/
-bin/
-src/
-tsconfig.json
-.eslintrc.yml
