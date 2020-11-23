@@ -29,6 +29,11 @@ export default function createReducer<
   // could be undefined.
   const lazilyCreateActionMap = callOnce(() => {
     const reducers = reducerFactory(handleAction);
+    assert(
+      typeof reducers !== 'undefined',
+      `createReducer(...) expects a list of action handlers (got undefined).`,
+    );
+
     const actionMap = mapActionsToReducers(reducers);
 
     return actionMap;

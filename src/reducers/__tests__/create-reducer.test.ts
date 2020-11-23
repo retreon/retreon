@@ -58,6 +58,15 @@ describe('createReducer', () => {
     expect(fail).toThrow(/expects a function/i);
   });
 
+  it('complains if the return value is not an array', () => {
+    const fail = () => {
+      const reducer = createReducer(null, jest.fn());
+      reducer(undefined, { type: '@@init' });
+    };
+
+    expect(fail).toThrow(/list/);
+  });
+
   describe('handleAction', () => {
     it('calls the action reducer when it matches', () => {
       const increment = createAction('increment', () => 'yo');
