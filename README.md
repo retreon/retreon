@@ -9,39 +9,23 @@
 
 ---
 
-## Project Status
-:warning: Experimental
-
-The API is evolving and unstable.
-
 ## Purpose
-Redux is a phenomenally powerful tool, and it can be a true joy to work with. But
-it takes time to find good tooling and develop healthy patterns.
+Redux is a phenomenally powerful tool, and it can be a true joy to work with. But it takes time to find good tooling and develop healthy patterns.
 
-Retreon aims to provide good patterns and strong types out of the box. Error
-handling, async actions, and state changes are first class citizens.
+Retreon aims to provide good patterns and strong types out of the box, including tools for async actions and error handling. Retreon is [FSA compliant](https://github.com/redux-utilities/flux-standard-action#readme).
 
-Retreon is [FSA compliant](https://github.com/redux-utilities/flux-standard-action#readme).
+Here's a taste:
 
-## [Examples](https://github.com/PsychoLlama/retreon/tree/master/examples)
-For a quick introduction, take a look at some [retreon
-examples](https://github.com/PsychoLlama/retreon/tree/master/examples).
+```ts
+// actions.ts
+const changeTheme = createAction('change-theme', (theme: Theme) => {
+  localStorage.setItem('theme-preference', theme);
+  return theme
+})
+```
 
-## Documentation
-> :construction: documentation is a work in progress.
-
-The API revolves around two functions: `createAction(...)` and
-`createReducer(...)`. If you've ever used
-[redux-actions](https://github.com/redux-utilities/redux-actions), it will
-probably feel familiar. Here's how it looks in practice...
-
-```js
-import { addTask, createReducer } from 'retreon'
-
-// Define redux actions using `createAction(...)`
-const changeTheme = createAction<string>('change-theme')
-
-// Create a reducer to handle that action.
+```ts
+// reducer.ts
 const reducer = createReducer({ theme: 'light' }, handleAction => [
   handleAction(changeTheme, (state, theme) => {
     state.theme = theme
@@ -49,103 +33,34 @@ const reducer = createReducer({ theme: 'light' }, handleAction => [
 ])
 ```
 
-Note: mutation is okay. Reducers are wrapped with
-[immer](https://github.com/immerjs/immer). The changes are applied immutably.
+If you prefer to learn by example, take a gander at [the examples directory](https://github.com/retreon/retreon/tree/master/examples), or check out [TodoMVC](https://github.com/retreon/todomvc/) to see a functioning application.
 
-Optionally you can pass a function to run when the action gets invoked. That's
-your side effect.
+## Installation
+Retreon can be installed through npm.
 
-```js
-// Check there.
-const save = createAction('settings/save', (settings: Settings) => {
-  localStorage.setItem('settings', JSON.stringify(settings))
-})
+```bash
+# NPM
+npm install retreon
+
+# Yarn
+yarn add retreon
 ```
 
-### Error handling
-Retreon picks up any errors or rejections and emits them as redux actions.
-Simply throwing an error will signal the reducer.
+Retreon depends on middleware to implement async actions and error handling. Once it's installed, register it with your redux store:
 
 ```ts
-const save = createAction('settings/save', (settings: Settings) => {
-  if (storagePolicy !== 'allowed') {
-    throw new Error('Unavailable For Legal Reasons.')
-  }
+// Wherever you create your redux store...
+import { middleware } from 'retreon'
 
-  localStorage.setItem('settings', JSON.stringify(settings))
-})
+createStore(reducer, applyMiddleware(middleware))
 ```
 
-Then, listen for errors using `handleAction.error(...)`:
-```js
-import * as settings from '../actions/settings'
+## Documentation
+Documentation is hosted on [the retreon website](https://retreon.archetype.foundation):
 
-createReducer(initialState, handleAction => [
-  handleAction(settings.save, (state, payload) => {
-    // Only handles success.
-  }),
+- [API](https://retreon.archetype.foundation/creating-actions)
+- [Examples](https://github.com/retreon/retreon/tree/master/examples)
 
-  handleAction.error(settings.save, (state, error) => {
-    // Only handles failure.
-  }),
-])
-```
+---
 
-### Async actions
-Async actions are still experimental. They're implemented through a custom
-redux middleware. It intercepts and consumes all dispatched async iterators.
-
-```js
-async function* actionSequence() {
-  yield { type: 'action-1' }
-  yield { type: 'action-2' }
-  yield { type: 'action-3' }
-
-  return 'resolve value'
-}
-
-await store.dispatch(actionSequence())
-```
-
-Async actions are created with `createAction.async(...)`.
-
-```js
-const loadUser = createAction.async('users/load', async (id: string) => {
-  const response = await fetch(`/users/${id}/`)
-  const user = await response.json()
-
-  return { user, id }
-})
-```
-
-If it resolves, the action goes through `handleAction(...)`. Failures go
-through `handleAction.error(...)`.
-
-In addition, async action creators dispatch immediately so you can
-optimistically update state (like setting a `loading` flag or invalidating the
-cache). Listen for it using `handleAction.optimistic(...)`.
-
-```js
-createReducer(initialState, handleAction => [
-  handleAction.optimistic(loadUser, (state, id) => {
-    state.loading = true
-  }),
-
-  handleAction(loadUser, (state, { user, id }) => {
-    state.loading = false
-    state.users[id] = user
-  }),
-])
-```
-
-And that concludes the API. Thank you for flying retreon airlines.
-
-## Roadmap
-- [x] Async error handling
-- [ ] Improved documentation
-- [ ] More examples
-
-## Prior Art
-Retreon is inspired by
-[redux-actions](https://github.com/redux-utilities/redux-actions) and
-[immer](https://github.com/immerjs/immer).
+Retreon is inspired by [redux-actions](https://github.com/redux-utilities/redux-actions) and [immer](https://github.com/immerjs/immer).
