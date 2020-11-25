@@ -1,7 +1,6 @@
 import createAsyncAction from './create-async-action';
 import bindActionType from './bind-action-type';
 import validateActionType from './validate-action-type';
-import { isKnownError } from '../utils/errors';
 import {
   ActionConstant,
   CoercibleAction,
@@ -56,14 +55,17 @@ export default function createAction(actionType: any, effect?: any) {
   validateActionType(actionType);
 
   function executeEffectAndReturnAction(input: any) {
+    // This action is free of side effects.
     if (effect === undefined) {
       if (input === undefined) {
         return { type: actionType };
       }
 
+      // The caller explicitly provided a payload.
       return { type: actionType, payload: input };
     }
 
+    // If given an effect, whatever it returns becomes the payload.
     return { type: actionType, payload: effect(input) };
   }
 
@@ -75,14 +77,7 @@ export default function createAction(actionType: any, effect?: any) {
     } catch (error) {
       const action = { type: actionType, error: true, payload: error };
       yield action;
-
-      // Known errors are swallowed to avoid false positives in the console
-      // and error reporting services. This behavior is opt-in only.
-      if (isKnownError(error)) {
-        return action;
-      } else {
-        throw error;
-      }
+      throw error;
     }
   });
 }

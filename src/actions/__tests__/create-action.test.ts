@@ -12,7 +12,6 @@ import {
   isActionFailure,
   isOptimisticAction,
 } from '../../utils/action-variant';
-import { mixin } from '../../utils/errors';
 
 describe('createAction', () => {
   it('returns an action creator', () => {
@@ -38,34 +37,17 @@ describe('createAction', () => {
   });
 
   it('yields an error type if the effect throws', () => {
-    class KnownError extends mixin(Error) {}
-    const error = new KnownError('testing known effect errors');
+    const error = new Error('testing effect errors');
 
     const doTheThing = createAction('effect', () => {
       throw error;
     });
 
-    expect(Array.from(doTheThing())).toEqual([
-      {
-        type: 'effect',
-        error: true,
-        payload: error,
-      },
-    ]);
-  });
-
-  it('returns the error type for recognized errors', () => {
-    class KnownError extends mixin(Error) {}
-    const error = new KnownError('testing known effect errors');
-
-    const doTheThing = createAction('effect', () => {
-      throw error;
+    expect(doTheThing().next().value).toEqual({
+      type: 'effect',
+      error: true,
+      payload: error,
     });
-
-    const iterator = doTheThing();
-
-    // First yield is the action, last is the return value.
-    expect(iterator.next().value).toEqual(iterator.next().value);
   });
 
   it('re-throws unrecognized errors', () => {
