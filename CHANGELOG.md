@@ -6,6 +6,8 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 [semver](https://semver.org/).
 
 ## [UNRELEASED]
+
+## [0.6.0] - 2020-11-25
 Removed:
 - The experimental `swallow(...)` class mixin was unsuccessful. It has been
   removed.
@@ -65,7 +67,8 @@ Fixed:
 ## [0.1.0] - 2020-02-19
 Initial release.
 
-[UNRELEASED]: https://github.com/PsychoLlama/retreon/compare/v0.5.0...HEAD
+[UNRELEASED]: https://github.com/PsychoLlama/retreon/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/PsychoLlama/retreon/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/PsychoLlama/retreon/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/PsychoLlama/retreon/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/PsychoLlama/retreon/compare/v0.2.0...v0.3.0
