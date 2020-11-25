@@ -6,6 +6,9 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 [semver](https://semver.org/).
 
 ## [UNRELEASED]
+Removed:
+- The experimental `swallow(...)` class mixin was unsuccessful. It has been
+  removed.
 
 ## [0.5.0] - 2020-11-24
 Changed:

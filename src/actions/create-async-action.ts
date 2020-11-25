@@ -65,7 +65,6 @@ export default function createAsyncAction<
         payload: error,
       };
 
-      // TODO: Determine how to treat known errors.
       throw error;
     }
   }

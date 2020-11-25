@@ -1,7 +1,6 @@
 # Identify Known Errors through Class Mixins
-- Status: accepted
+- Status: superseded by [ADR-0002](./0002-return-payloads-from-dispatch.md)
 - Deciders: @PsychoLlama
-- Date: 2020-11-12
 
 ## Context and Problem Statement
 Retreon aims to provide robust error handling for all action creators, but

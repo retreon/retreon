@@ -5,11 +5,8 @@ import { createReducer, createAction } from '../../index';
 import { expectType } from '../../types/assertions';
 import forgeAction from '../../utils/forge-action';
 import generatorMiddleware from '../../middleware/generator-middleware';
-import { mixin } from '../../utils/errors';
 
 describe('createReducer', () => {
-  class KnownError extends mixin(Error) {}
-
   const setup = <F extends (...args: any[]) => any, S>(
     reducer: F,
     state?: S,
@@ -77,14 +74,15 @@ describe('createReducer', () => {
       ]);
 
       const store = setup(reducer);
-      const action = store.dispatch(increment());
+      const payload = store.dispatch(increment());
 
-      expect(actionReducer).toHaveBeenCalledWith(0, action.payload);
+      expect(actionReducer).toHaveBeenCalledWith(0, payload);
     });
 
     it('ignores action errors', () => {
+      const error = new Error('Testing failures');
       const fail = createAction('fail', () => {
-        throw new KnownError('Testing failures');
+        throw error;
       });
 
       const onSuccess = jest.fn();
@@ -96,7 +94,12 @@ describe('createReducer', () => {
       ]);
 
       const store = setup(reducer);
-      store.dispatch(fail());
+
+      try {
+        store.dispatch(fail());
+      } catch (dispatchedError) {
+        expect(dispatchedError).toBe(error);
+      }
 
       expect(onSuccess).not.toHaveBeenCalled();
       expect(onFailure).toHaveBeenCalled();
@@ -180,8 +183,9 @@ describe('createReducer', () => {
 
   describe('handleAction.error', () => {
     it('is called for errors', () => {
+      const error = new Error('Testing failures');
       const fail = createAction('fail', () => {
-        throw new KnownError('Testing failures');
+        throw error;
       });
 
       const onSuccess = jest.fn();
@@ -193,7 +197,12 @@ describe('createReducer', () => {
       ]);
 
       const store = setup(reducer);
-      store.dispatch(fail());
+
+      try {
+        store.dispatch(fail());
+      } catch (dispatchedError) {
+        expect(dispatchedError).toBe(error);
+      }
 
       expect(onSuccess).not.toHaveBeenCalled();
       expect(onFailure).toHaveBeenCalled();

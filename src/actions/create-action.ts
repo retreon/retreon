@@ -1,7 +1,6 @@
 import createAsyncAction from './create-async-action';
 import bindActionType from './bind-action-type';
 import validateActionType from './validate-action-type';
-import { isKnownError } from '../utils/errors';
 import {
   ActionConstant,
   CoercibleAction,
@@ -23,12 +22,12 @@ import createActionFactory from './action-factory';
  */
 export default function createAction(
   type: ActionConstant,
-): CoercibleAction<[], ActionSequence<VoidAction>>;
+): CoercibleAction<[], Generator<VoidAction, void>>;
 
 // No effect. Just pass a payload.
 export default function createAction<Payload>(
   type: ActionConstant,
-): CoercibleAction<[Payload], ActionSequence<ActionSuccess<Payload>>>;
+): CoercibleAction<[Payload], Generator<ActionSuccess<Payload>, Payload>>;
 
 // No arguments.
 export default function createAction<Effect extends () => any>(
@@ -56,14 +55,17 @@ export default function createAction(actionType: any, effect?: any) {
   validateActionType(actionType);
 
   function executeEffectAndReturnAction(input: any) {
+    // This action is free of side effects.
     if (effect === undefined) {
       if (input === undefined) {
         return { type: actionType };
       }
 
+      // The caller explicitly provided a payload.
       return { type: actionType, payload: input };
     }
 
+    // If given an effect, whatever it returns becomes the payload.
     return { type: actionType, payload: effect(input) };
   }
 
@@ -71,18 +73,11 @@ export default function createAction(actionType: any, effect?: any) {
     try {
       const action = executeEffectAndReturnAction(input);
       yield action;
-      return action;
+      return action.payload;
     } catch (error) {
       const action = { type: actionType, error: true, payload: error };
       yield action;
-
-      // Known errors are swallowed to avoid false positives in the console
-      // and error reporting services. This behavior is opt-in only.
-      if (isKnownError(error)) {
-        return action;
-      } else {
-        throw error;
-      }
+      throw error;
     }
   });
 }
@@ -98,9 +93,10 @@ createAction.async = createAsyncAction;
 // Advanced usage: action factory for generator functions.
 createAction.factory = createActionFactory;
 
-export type ActionSequence<Action> = Generator<Action, Action>;
-
 // If an effect is provided, we have to assume it can fail.
 type ActionOutcomesForEffect<
   Effect extends (...args: any[]) => any
-> = ActionSequence<ActionSuccess<ReturnType<Effect>> | ActionFailure<unknown>>;
+> = Generator<
+  ActionSuccess<ReturnType<Effect>> | ActionFailure<unknown>,
+  ReturnType<Effect>
+>;
