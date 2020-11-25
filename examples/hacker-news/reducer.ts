@@ -1,6 +1,7 @@
 import { createReducer } from 'retreon';
 
 import * as news from './actions';
+import { UpvoteError } from './effects/errors';
 
 type State = {
   currentPage: number;
@@ -21,7 +22,6 @@ export const initialState: State = {
   results: [],
 };
 
-// TODO: Fix payload type inference.
 export default createReducer(initialState, (handleAction) => [
   handleAction.optimistic(news.loadPage, (state, page) => {
     state.loading = true;
@@ -37,5 +37,12 @@ export default createReducer(initialState, (handleAction) => [
   handleAction.optimistic(news.upvote, (state, { id }) => {
     const result = state.results.find((result) => result.id === id);
     if (result) result.upvotes++;
+  }),
+
+  handleAction.error(news.upvote, (state, error) => {
+    if (error instanceof UpvoteError) {
+      const result = state.results.find((result) => result.id === error.postId);
+      if (result) result.upvotes--;
+    }
   }),
 ]);

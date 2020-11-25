@@ -3,9 +3,10 @@ import { Store } from 'redux';
 import * as news from '../actions';
 import { initialState, NewsResult } from '../reducer';
 import { initializeStore } from '../redux-store';
-import * as mockedEffects from '../effects';
+import * as mockedEffects from '../effects/news';
+import { UpvoteError } from '../effects/errors';
 
-jest.mock('../effects');
+jest.mock('../effects/news');
 
 const effects: jest.Mocked<typeof mockedEffects> = mockedEffects as any;
 
@@ -27,7 +28,7 @@ describe('News reducer', () => {
   let id = 0;
   const uuid = () => id++;
 
-  const createResult = <T>(patch?: T): NewsResult => ({
+  const createResult = (patch?: Partial<NewsResult>): NewsResult => ({
     headline: 'Microsoft ruled trustworthy again',
     url: 'http://microsoft.net/developers/developers/developers.aspx',
     upvotes: 0,
@@ -65,10 +66,7 @@ describe('News reducer', () => {
   describe('upvote', () => {
     it('increments the vote count', async () => {
       const result = createResult();
-      const store = initializeStore({
-        ...initialState,
-        results: [result],
-      });
+      const store = initializeStore({ ...initialState, results: [result] });
 
       const snapshot = record(store);
       jest.spyOn(store, 'dispatch');
@@ -77,6 +75,19 @@ describe('News reducer', () => {
 
       expect(state).toMatchObject({
         results: [{ upvotes: result.upvotes + 1 }],
+      });
+    });
+
+    it('reverts the upvote if the request fails', async () => {
+      const result = createResult();
+      const store = initializeStore({ ...initialState, results: [result] });
+
+      effects.upvote.mockRejectedValue(new UpvoteError(result.id));
+      const promise = store.dispatch(news.upvote({ id: result.id }));
+      await expect(promise).rejects.toThrow();
+
+      expect(store.getState()).toMatchObject({
+        results: [{ upvotes: 0 }],
       });
     });
   });
