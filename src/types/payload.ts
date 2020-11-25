@@ -1,5 +1,4 @@
 import { AsyncActionSequence } from '../actions/create-async-action';
-import { ActionSequence } from '../actions/create-action';
 import { VoidAction, ActionSuccess, ActionFailure } from './actions';
 import { ActionFactory } from '../actions/action-factory';
 
@@ -17,13 +16,13 @@ export type SuccessPayload<
 > = Factory extends ActionFactory<infer Payload, any>
   ? Payload
   : Factory extends (...args: any[]) => any
-  ? ReturnType<Factory> extends ActionSequence<
+  ? ReturnType<Factory> extends Generator<
       ActionFailure<unknown> | ActionSuccess<infer Payload>
     >
     ? Payload
-    : ReturnType<Factory> extends ActionSequence<ActionSuccess<infer Payload>>
+    : ReturnType<Factory> extends Generator<ActionSuccess<infer Payload>>
     ? Payload
-    : ReturnType<Factory> extends ActionSequence<VoidAction>
+    : ReturnType<Factory> extends Generator<VoidAction>
     ? void
     : ReturnType<Factory> extends AsyncActionSequence<any, infer Payload>
     ? Payload

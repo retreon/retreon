@@ -4,6 +4,7 @@ import Phase from '../../constants/phase';
 import {
   OptimisticAction,
   ActionSuccess,
+  ActionFailure,
   VoidAction,
 } from '../../types/actions';
 import {
@@ -158,13 +159,15 @@ describe('createAction', () => {
       const unfailingAction = createAction<string>('unfailing');
       const uncertainAction = createAction('type', () => 5);
 
-      expectType<{ payload?: void }>(voidAction().next().value);
-      expectType<{ payload: string }>(unfailingAction('t').next().value);
+      expectType<Generator<VoidAction, void>>(voidAction());
 
-      const { value: action } = uncertainAction().next();
-      if (action.error !== true) {
-        expectType<number>(action.payload);
-      }
+      expectType<Generator<ActionSuccess<string>, string>>(
+        unfailingAction('t'),
+      );
+
+      expectType<
+        Generator<ActionSuccess<number> | ActionFailure<unknown>, number>
+      >(uncertainAction());
     });
   });
 

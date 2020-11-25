@@ -77,9 +77,9 @@ describe('createReducer', () => {
       ]);
 
       const store = setup(reducer);
-      const action = store.dispatch(increment());
+      const payload = store.dispatch(increment());
 
-      expect(actionReducer).toHaveBeenCalledWith(0, action.payload);
+      expect(actionReducer).toHaveBeenCalledWith(0, payload);
     });
 
     it('ignores action errors', () => {
