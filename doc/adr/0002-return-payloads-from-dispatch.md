@@ -1,5 +1,5 @@
 # Return Payloads from Dispatch
-- Status: proposed
+- Status: accepted
 - Deciders: @PsychoLlama
 
 ## Context and Problem Statement

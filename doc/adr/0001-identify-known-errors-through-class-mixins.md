@@ -1,5 +1,5 @@
 # Identify Known Errors through Class Mixins
-- Status: accepted
+- Status: superseded by [ADR-0002](./0002-return-payloads-from-dispatch.md)
 - Deciders: @PsychoLlama
 
 ## Context and Problem Statement
