@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "module": "es/index.js",
   "repository": "github:retreon/retreon",
+  "homepage": "https://retreon.archetype.foundation",
   "author": "Jesse Gibson <JesseTheGibson@gmail.com>",
   "license": "MIT",
   "sideEffects": false,
