@@ -1,23 +1,24 @@
-name: Continuous Integration
+name: Test
 
 on:
-  - push
-  - pull_request
+  pull_request:
+  push:
+    branches: [master]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    name: Node v${{ matrix.node_version }}
     strategy:
       matrix:
         node_version: [10, 12, 14]
-    name: Node ${{ matrix.node_version }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
-        name: install node v${{ matrix.node_version }}
+        name: Install Node v${{ matrix.node_version }}
         with:
           node-version: ${{ matrix.node_version }}
-      - name: Install packages
-        run: yarn install
-      - name: Run tests
+      - name: Install
+        uses: bahmutov/npm-install@v1
+      - name: Test
         run: yarn test
