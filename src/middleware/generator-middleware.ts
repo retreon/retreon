@@ -29,9 +29,9 @@ const reduxMiddleware: Middleware = ({ dispatch }) => (next) => <
 };
 
 // This produces the set of all things which can be dispatched.
-type DispatchCompatible<Dispatch extends (...args: any) => any> = Parameters<
-  Dispatch
->[0];
+type DispatchCompatible<
+  Dispatch extends (...args: any) => any
+> = Parameters<Dispatch>[0];
 
 // Consume the async iterator. Every yielded value is dispatched and the
 // return value is resolved and returned from `dispatch(...)`.
@@ -107,9 +107,9 @@ type IteratorReturnType<
 declare module 'redux' {
   interface Dispatch {
     // Synchronous action creators
-    <Sequence extends Iterator<any>>(action: Sequence): IteratorReturnType<
-      Sequence
-    >;
+    <Sequence extends Iterator<any>>(
+      action: Sequence,
+    ): IteratorReturnType<Sequence>;
 
     // Async action creators
     <Sequence extends AsyncIterator<any>>(action: Sequence): Promise<

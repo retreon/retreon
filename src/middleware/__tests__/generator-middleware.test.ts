@@ -5,7 +5,7 @@ import { expectType } from '../../types/assertions';
 
 describe('Redux middleware', () => {
   const setup = () => {
-    const reducer = jest.fn((state) => state);
+    const reducer = jest.fn().mockImplementation((state) => state);
     const store = createStore(reducer, applyMiddleware(middleware));
     jest.spyOn(store, 'dispatch');
 
