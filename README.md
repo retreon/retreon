@@ -1,6 +1,6 @@
 <div align="center">
   <h1>retreon</h1>
-  <p>A delightful, type-safe redux toolkit.</p>
+  <p>A type-safe, batteries-included redux toolkit.</p>
 
   <a href="https://github.com/PsychoLlama/retreon/actions?query=workflow%3A%22Continuous+Integration%22"><img alt="Build status" src="https://img.shields.io/github/workflow/status/PsychoLlama/retreon/Continuous Integration/master" /></a>
   <a href="https://www.npmjs.com/package/retreon/"><img alt="npm" src="https://img.shields.io/npm/v/retreon" /></a>
