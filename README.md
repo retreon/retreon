@@ -2,7 +2,7 @@
   <h1>retreon</h1>
   <p>A type-safe, batteries-included redux toolkit.</p>
 
-  <a href="https://github.com/PsychoLlama/retreon/actions?query=workflow%3A%22Continuous+Integration%22"><img alt="Build status" src="https://img.shields.io/github/workflow/status/PsychoLlama/retreon/Continuous Integration/master" /></a>
+  <a href="https://github.com/PsychoLlama/retreon/actions?query=workflow%3A%22Continuous+Integration%22"><img alt="Build status" src="https://img.shields.io/github/workflow/status/PsychoLlama/retreon/Continuous Integration/main" /></a>
   <a href="https://www.npmjs.com/package/retreon/"><img alt="npm" src="https://img.shields.io/npm/v/retreon" /></a>
   <a href="https://bundlephobia.com/result?p=retreon"><img alt="npm bundle size" src="https://img.shields.io/bundlephobia/minzip/retreon?color=teal" /></a>
 </div>
@@ -33,7 +33,7 @@ const reducer = createReducer({ theme: 'light' }, handleAction => [
 ])
 ```
 
-If you prefer to learn by example, take a gander at [the examples directory](https://github.com/retreon/retreon/tree/master/examples), or check out [TodoMVC](https://github.com/retreon/todomvc/) to see a functioning application.
+If you prefer to learn by example, take a gander at [the examples directory](https://github.com/retreon/retreon/tree/main/examples), or check out [TodoMVC](https://github.com/retreon/todomvc/) to see a functioning application.
 
 ## Installation
 Retreon can be installed through npm.
@@ -59,7 +59,7 @@ createStore(reducer, applyMiddleware(middleware))
 Documentation is hosted on [the retreon website](https://retreon.archetype.foundation):
 
 - [API](https://retreon.archetype.foundation/creating-actions)
-- [Examples](https://github.com/retreon/retreon/tree/master/examples)
+- [Examples](https://github.com/retreon/retreon/tree/main/examples)
 
 ---
 
