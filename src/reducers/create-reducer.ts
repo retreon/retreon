@@ -12,7 +12,7 @@ import { ActionFactory } from '../actions/action-factory';
 
 export default function createReducer<
   State,
-  ActionHandlerFactory extends ReducerDefinitionFactory<State>
+  ActionHandlerFactory extends ReducerDefinitionFactory<State>,
 >(
   initialState: State,
   reducerFactory: ActionHandlerFactory,
@@ -105,7 +105,7 @@ interface HandleAction<State> {
     Reducer extends (
       state: Draft<State>,
       action: SuccessPayload<ActionCreator>,
-    ) => NextState<State>
+    ) => NextState<State>,
   >(
     actionCreator: ActionCreator,
     reducer: Reducer,
@@ -123,7 +123,7 @@ interface HandleAction<State> {
    */
   error<
     ActionCreator extends ActionFactory<any, any> | ((...args: any) => any),
-    Reducer extends (state: Draft<State>, error: unknown) => NextState<State>
+    Reducer extends (state: Draft<State>, error: unknown) => NextState<State>,
   >(
     actionCreator: ActionCreator,
     reducer: Reducer,
@@ -146,7 +146,7 @@ interface HandleAction<State> {
     Reducer extends (
       state: Draft<State>,
       action: OptimisticPayload<ActionCreator>,
-    ) => NextState<State>
+    ) => NextState<State>,
   >(
     actionCreator: ActionCreator,
     reducer: Reducer,

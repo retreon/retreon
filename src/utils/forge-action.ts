@@ -12,7 +12,7 @@ import Phase from '../constants/phase';
 // tests. Purely internal.
 const forgeAction = <
   ActionCreator extends ActionTypeCoercible & ((...args: any) => any),
-  T
+  T,
 >(
   actionCreator: ActionCreator,
   payload: T,
@@ -26,7 +26,7 @@ const forgeAction = <
 
 forgeAction.error = <
   ActionCreator extends ActionTypeCoercible & ((...args: any) => any),
-  T
+  T,
 >(
   actionCreator: ActionCreator,
   payload: T,
@@ -38,7 +38,7 @@ forgeAction.error = <
 
 forgeAction.optimistic = <
   ActionCreator extends ActionTypeCoercible & ((...args: any) => any),
-  T
+  T,
 >(
   actionCreator: ActionCreator,
   payload: T,

@@ -37,7 +37,7 @@ export default function createAction<Effect extends () => any>(
 
 // At least one argument.
 export default function createAction<
-  Effect extends (arg: any, ...args: any) => any
+  Effect extends (arg: any, ...args: any) => any,
 >(
   type: ActionConstant,
   effect: Effect,
@@ -94,9 +94,8 @@ createAction.async = createAsyncAction;
 createAction.factory = createActionFactory;
 
 // If an effect is provided, we have to assume it can fail.
-type ActionOutcomesForEffect<
-  Effect extends (...args: any[]) => any
-> = Generator<
-  ActionSuccess<ReturnType<Effect>> | ActionFailure<unknown>,
-  ReturnType<Effect>
->;
+type ActionOutcomesForEffect<Effect extends (...args: any[]) => any> =
+  Generator<
+    ActionSuccess<ReturnType<Effect>> | ActionFailure<unknown>,
+    ReturnType<Effect>
+  >;
