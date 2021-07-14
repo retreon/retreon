@@ -110,6 +110,6 @@
   },
   "dependencies": {
     "@babel/runtime": "7.x.x",
-    "immer": "^8.0.1"
+    "immer": "^9.0.0"
   }
 }
