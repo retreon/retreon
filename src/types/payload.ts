@@ -12,7 +12,7 @@ import { ActionFactory } from '../actions/action-factory';
  */
 
 export type SuccessPayload<
-  Factory extends ActionFactory<any, any> | ((...args: any[]) => any)
+  Factory extends ActionFactory<any, any> | ((...args: any[]) => any),
 > = Factory extends ActionFactory<infer Payload, any>
   ? Payload
   : Factory extends (...args: any[]) => any
@@ -32,7 +32,7 @@ export type SuccessPayload<
 export type OptimisticPayload<
   Factory extends
     | ActionFactory<any, any>
-    | ((...args: any[]) => AsyncGenerator<any>)
+    | ((...args: any[]) => AsyncGenerator<any>),
 > = Factory extends ActionFactory<any, infer Payload>
   ? Payload
   : Factory extends (...args: any[]) => AsyncActionSequence<infer Payload, any>

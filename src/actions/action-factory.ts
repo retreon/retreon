@@ -16,7 +16,7 @@ import {
  */
 export default function createActionFactory<
   SuccessPayload = never,
-  OptimisticPayload = never
+  OptimisticPayload = never,
 >(
   actionType: ActionConstant,
 ): ActionFactory<SuccessPayload, OptimisticPayload> {

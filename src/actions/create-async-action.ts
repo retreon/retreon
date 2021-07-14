@@ -36,7 +36,7 @@ export default function createAsyncAction<Effect extends AnyAsyncFunction>(
 
 export default function createAsyncAction<
   TReturn,
-  Effect extends (...args: any) => Promise<TReturn>
+  Effect extends (...args: any) => Promise<TReturn>,
 >(actionType: ActionConstant, effect: Effect) {
   validateActionType(actionType);
 
