@@ -20,25 +20,23 @@ import createActionFactory from './action-factory';
  *   return localStorage.getItem('theme')
  * })
  */
-export default function createAction(
+function createAction(
   type: ActionConstant,
 ): CoercibleAction<[], Generator<VoidAction, void>>;
 
 // No effect. Just pass a payload.
-export default function createAction<Payload>(
+function createAction<Payload>(
   type: ActionConstant,
 ): CoercibleAction<[Payload], Generator<ActionSuccess<Payload>, Payload>>;
 
 // No arguments.
-export default function createAction<Effect extends () => any>(
+function createAction<Effect extends () => any>(
   type: ActionConstant,
   effect: Effect,
 ): CoercibleAction<[], ActionOutcomesForEffect<Effect>>;
 
 // At least one argument.
-export default function createAction<
-  Effect extends (arg: any, ...args: any) => any,
->(
+function createAction<Effect extends (arg: any, ...args: any) => any>(
   type: ActionConstant,
   effect: Effect,
 ): Effect extends (arg: infer T, ...args: any) => any
@@ -51,7 +49,7 @@ export default function createAction<
 // createAction('add-file', file => {
 //   return { url: URL.createObjectURL(file) }
 // })
-export default function createAction(actionType: any, effect?: any) {
+function createAction(actionType: any, effect?: any) {
   validateActionType(actionType);
 
   function executeEffectAndReturnAction(input: any) {
@@ -99,3 +97,5 @@ type ActionOutcomesForEffect<Effect extends (...args: any[]) => any> =
     ActionSuccess<ReturnType<Effect>> | ActionFailure<unknown>,
     ReturnType<Effect>
   >;
+
+export default createAction;

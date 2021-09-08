@@ -10,6 +10,10 @@ Changed:
 - Upgraded immer from `8.0.1` to `9.0.6` (see [release
   notes](https://github.com/immerjs/immer/releases)).
 
+Fixed:
+- Bug where `createAction.{async,factory}` functions weren't recognized by
+  newer versions of TypeScript.
+
 ## [0.6.1] - 2021-01-24
 Changed:
 - Upgraded immer from `8.0.0` to `8.0.1` (see [release
