@@ -49,7 +49,7 @@ describe('Redux middleware', () => {
     it('resumes execution with the dispatch return value', async () => {
       const { store } = setup();
 
-      async function* action() {
+      async function* action(): AsyncIterable<{ type: string }> {
         const action = { type: 'dispatch-me' };
         expect(yield action).toEqual(action);
       }
@@ -89,7 +89,7 @@ describe('Redux middleware', () => {
     it('resumes execution with the dispatched result', () => {
       const { store } = setup();
 
-      function* action() {
+      function* action(): Iterable<{ type: string }> {
         const action = { type: 'action' };
         expect(yield action).toEqual(action);
       }
