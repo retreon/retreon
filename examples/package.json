@@ -7,6 +7,6 @@
   "private": true,
   "dependencies": {
     "retreon": "link:../",
-    "redux": "4.x.x"
+    "redux": "*"
   }
 }
