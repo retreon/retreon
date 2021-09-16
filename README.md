@@ -16,24 +16,36 @@ Retreon aims to provide good patterns and strong types out of the box, including
 
 Here's a taste:
 
-```ts
+```typescript
 // actions.ts
-const changeTheme = createAction('change-theme', (theme: Theme) => {
-  localStorage.setItem('theme-preference', theme);
-  return theme
+const fetchResource = createAction.async('fetch-resource', async (id: number) => {
+  const response = await fetch(`/resources/${id}`)
+  return response.json()
 })
 ```
 
-```ts
+```typescript
 // reducer.ts
-const reducer = createReducer({ theme: 'light' }, handleAction => [
-  handleAction(changeTheme, (state, theme) => {
-    state.theme = theme
+const reducer = createReducer(initialState, handleAction => [
+  // Called as soon as the action starts
+  handleAction.optimistic(fetchResource, (state, resourceId) => {
+    state.loading = true
+  }),
+
+  // Optionally, handle errors if your action fails
+  handleAction.error(fetchResource, (state, error) => {
+    state.loading = false
+  }),
+
+  // Called when the action's promise resolves, passing the payload
+  handleAction(fetchResource, (state, resource) => {
+    state.loading = false
+    state.resource = resource
   }),
 ])
 ```
 
-If you prefer to learn by example, take a gander at [the examples directory](https://github.com/retreon/retreon/tree/main/examples), or check out [TodoMVC](https://github.com/retreon/todomvc/) to see a functioning application.
+If you prefer to learn by example, take a gander at [the examples directory](https://github.com/retreon/retreon/tree/main/examples), or check out [TodoMVC](https://retreon.github.io/todomvc/) to see a functioning application.
 
 ## Installation
 Retreon can be installed through npm.
