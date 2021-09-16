@@ -6,6 +6,8 @@ a Changelog](https://keepachangelog.com/en/1.0.0/) and the project adheres to
 [semver](https://semver.org/).
 
 ## [UNRELEASED]
+
+## [0.7.0] - 2021-09-16
 Changed:
 - Upgraded immer from `8.0.1` to `9.0.6` (see [release
   notes](https://github.com/immerjs/immer/releases)).
@@ -79,7 +81,8 @@ Fixed:
 ## [0.1.0] - 2020-02-19
 Initial release.
 
-[UNRELEASED]: https://github.com/PsychoLlama/retreon/compare/v0.6.1...HEAD
+[UNRELEASED]: https://github.com/PsychoLlama/retreon/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/PsychoLlama/retreon/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/PsychoLlama/retreon/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/PsychoLlama/retreon/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/PsychoLlama/retreon/compare/v0.4.0...v0.5.0
