@@ -6,7 +6,7 @@
   "author": "Jesse Gibson <JesseTheGibson@gmail.com>",
   "private": true,
   "dependencies": {
-    "retreon": "link:../",
-    "redux": "*"
+    "redux": "*",
+    "retreon": "link:.."
   }
 }
