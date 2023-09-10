@@ -9,6 +9,13 @@
 
 ---
 
+## Project Status
+:no_entry: UNMAINTAINED
+
+State management is still heavily evolving in React. While I believe Retreon is one of the best ways to use Redux, the community is modernizing towards modular hook-based libraries.
+
+I would recommend exploring [Recoil](https://recoiljs.org/), [Jotai](https://jotai.org/), or any of the newer approaches.
+
 ## Purpose
 Redux is a phenomenally powerful tool, and it can be a true joy to work with. But it takes time to find good tooling and develop healthy patterns.
 
